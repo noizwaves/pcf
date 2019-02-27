@@ -1,9 +1,18 @@
 # Deploying PAS onto PCF
 
-How to deploy PAS onto GCP using mostly automation
+How to deploy PAS onto GCP using mostly automation. The outcome will be a PCF Foundation that is running PAS and secured by a real Lets Encrypt cert
 
 TODOS:
 - update instructions to use official `GCP Terraform Templates` release from PivNet
+- conf
+
+## 0. Certs (self signed)
+
+Either:
+
+1. Generate a self-signed cert whose Common Name is `*.dragonfruit.63r53rk54v0r.com` following https://devcenter.heroku.com/articles/ssl-certificate-self, or
+1. Generate a self-signed cert covering multiple domains of `*.dragonfruit.63r53rk54v0r.com, *.apps.dragonfruit.63r53rk54v0r.com, *.sys.dragonfruit.63r53rk54v0r.com, *.login.sys.dragonfruit.63r53rk54v0r.com, *.uaa.sys.dragonfruit.63r53rk54v0r.com` following https://medium.com/@pubudu538/how-to-create-a-self-signed-ssl-certificate-for-multiple-domains-25284c91142b
+
 
 ## 1. Create the infrastructure
 
@@ -16,6 +25,14 @@ Use the follow resources:
 Consume the output (`terraform output`):
 1. Set env var `OM_TARGET` to `https://<ops_manager_dns>`
 1. Set env var `OM_SKIP_SSL_VALIDATION` to `true`
+
+### 1.1 Google Cloud SQL
+
+Change the SQL Mode to `TRADITIONAL`
+
+```
+SET sql_mode = 'TRADITIONAL'
+```
 
 ## 2. Configure Ops Manager & BOSH Director
 
@@ -44,11 +61,13 @@ Use the following resources:
 1. Upload to Ops Manager (`om upload-product -p ./cf-*.pivotal`). PAS should appear under the "Import a Product" button (`om available-products`).
 1. Stage PAS for installation (`om stage-product -p cf -v 2.4.3`). The "Pivotal Application Service" tile should now appear in the Installation Dashboard (`om staged-products`) and require configuration.
 1. Configure PAS Settings manually by clicking on tile and following [guide](https://docs.pivotal.io/pivotalcf/2-4/customizing/gcp-er-config-terraform.html)
+    - "Networking"
+        - Check `Disable SSL certificate verification for this environment` to trust self-signed certs
     - "Certs"
         - Use Ops Manager CA at https://pcf.dragonfruit.63r53rk54v0r.com/api/v0/certificate_authorities
     - `File Storage > External Google Cloud Storage with Service Account`
-        - GCP Project ID: `terraform output` > `pas_blobstore_service_account_project`
-        - GCP Service Account Email: `terraform output` > `pas_blobstore_service_account_email`
+        - GCP Project ID: `terraform output pas_blobstore_service_account_project`
+        - GCP Service Account Email: `terraform output pas_blobstore_service_account_email`
         - GCP Service Account Key JSON: `cat ~/Downloads/auth.json`
 1. Stemcell via
     1. Navigate to https://network.pivotal.io/products/elastic-runtime/ "Depends On" to get the Stemcell version => Ubuntu Xenial
@@ -61,3 +80,20 @@ Use the following resources:
 
 Other useful commands:
 - `pivnet product-files -p <PRODUCT_SLUG> -r <VERSION> --format=yaml` to list the available downloads for a PivNet release https://network.pivotal.io/products/elastic-runtime/#/releases/297394
+
+# 4. Gain access to PAS
+
+1. Navigate to `Ops Manager > PAS Tile > Credentials > UAA > Admin Credentials` and copy password (=> PASSWORD)
+1. Visit https://login.sys.dragonfruit.63r53rk54v0r.com and log in with `admin:$PASSWORD`
+
+Other useful commands:
+- `pivnet product-files -p <PRODUCT_SLUG> -r <VERSION> --format=yaml` to list the available downloads for a PivNet release https://network.pivotal.io/products/elastic-runtime/#/releases/297394
+
+# 5. Use PAS
+
+`cf push` etc
+
+# 6. Deleting all the things
+
+1. Delete pushed apps
+1. `om unstage-product -p cf` and `apply changes`

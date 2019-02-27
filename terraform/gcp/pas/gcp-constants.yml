@@ -1,0 +1,3 @@
+---
+gcp_dns: 169.254.169.254
+ntp_servers: metadata.google.internal

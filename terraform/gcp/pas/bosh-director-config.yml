@@ -17,9 +17,9 @@ networks-configuration: # Step 5: "Create Networks" Config
   networks:
   - name: infrastructure
     subnets:
-    - iaas_identifier: dragonfruit-pcf-network/dragonfruit-infrastructure-subnet/us-west1
+    - iaas_identifier: ((env_name))-pcf-network/((env_name))-infrastructure-subnet/us-west1
       cidr: 10.0.0.0/26
-      dns: 169.254.169.254
+      dns: ((gcp_dns))
       gateway: 10.0.0.1
       reserved_ip_ranges: 10.0.0.1-10.0.0.9
       availability_zone_names:
@@ -28,9 +28,9 @@ networks-configuration: # Step 5: "Create Networks" Config
       - us-west1-c
   - name: pas
     subnets:
-    - iaas_identifier: dragonfruit-pcf-network/dragonfruit-pas-subnet/us-west1
+    - iaas_identifier: ((env_name))-pcf-network/((env_name))-pas-subnet/us-west1
       cidr: 10.0.4.0/24
-      dns: 169.254.169.254
+      dns: ((gcp_dns))
       gateway: 10.0.4.1
       reserved_ip_ranges: 10.0.4.1-10.0.4.9
       availability_zone_names:
@@ -39,9 +39,9 @@ networks-configuration: # Step 5: "Create Networks" Config
       - us-west1-c
   - name: services
     subnets:
-    - iaas_identifier: dragonfruit-pcf-network/dragonfruit-services-subnet/us-west1
+    - iaas_identifier: ((env_name))-pcf-network/((env_name))-services-subnet/us-west1
       cidr: 10.0.8.0/24
-      dns: 169.254.169.254
+      dns: ((gcp_dns))
       gateway: 10.0.8.1
       reserved_ip_ranges: 10.0.8.1-10.0.8.9
       availability_zone_names:
@@ -67,7 +67,7 @@ properties-configuration:
     keep_unreachable_vms: true
     local_blobstore_options:
       tls_enabled: true
-    ntp_servers_string: metadata.google.internal
+    ntp_servers_string: ((ntp_servers))
     post_deploy_enabled: true
     resurrector_enabled: true
     retry_bosh_deploys: true
@@ -77,12 +77,12 @@ properties-configuration:
     handlers: []
   iaas_configuration: # Step 2: "Google" Config
     additional_cloud_properties: {}
-    associated_service_account: dragonfruit-opsman@cf-sandbox-aneumann.iam.gserviceaccount.com
+    associated_service_account: ((env_name))-opsman@((project)).iam.gserviceaccount.com
     auth_json: ((auth_json))
-    default_deployment_tag: dragonfruit
+    default_deployment_tag: ((env_name))
     guid: b604ac7560f5615f4144
     name: default
-    project: cf-sandbox-aneumann
+    project: ((project))
   security_configuration: # Step 7: "Security Page" Config, Part: 2
     generate_vm_passwords: true
     opsmanager_root_ca_trusted_certs: true
