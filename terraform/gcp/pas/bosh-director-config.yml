@@ -1,0 +1,104 @@
+---
+az-configuration: # Step 4: "Create Availability Zones" Config
+- name: us-west1-a
+  iaas_configuration_guid: b604ac7560f5615f4144
+- name: us-west1-b
+  iaas_configuration_guid: b604ac7560f5615f4144
+- name: us-west1-c
+  iaas_configuration_guid: b604ac7560f5615f4144
+network-assignment: # Step 6: "Assign AZs and Networks" Config
+  network:
+    name: infrastructure
+  other_availability_zones: []
+  singleton_availability_zone:
+    name: us-west1-a
+networks-configuration: # Step 5: "Create Networks" Config
+  icmp_checks_enabled: false
+  networks:
+  - name: infrastructure
+    subnets:
+    - iaas_identifier: dragonfruit-pcf-network/dragonfruit-infrastructure-subnet/us-west1
+      cidr: 10.0.0.0/26
+      dns: 169.254.169.254
+      gateway: 10.0.0.1
+      reserved_ip_ranges: 10.0.0.1-10.0.0.9
+      availability_zone_names:
+      - us-west1-a
+      - us-west1-b
+      - us-west1-c
+  - name: pas
+    subnets:
+    - iaas_identifier: dragonfruit-pcf-network/dragonfruit-pas-subnet/us-west1
+      cidr: 10.0.4.0/24
+      dns: 169.254.169.254
+      gateway: 10.0.4.1
+      reserved_ip_ranges: 10.0.4.1-10.0.4.9
+      availability_zone_names:
+      - us-west1-a
+      - us-west1-b
+      - us-west1-c
+  - name: services
+    subnets:
+    - iaas_identifier: dragonfruit-pcf-network/dragonfruit-services-subnet/us-west1
+      cidr: 10.0.8.0/24
+      dns: 169.254.169.254
+      gateway: 10.0.8.1
+      reserved_ip_ranges: 10.0.8.1-10.0.8.9
+      availability_zone_names:
+      - us-west1-a
+      - us-west1-b
+      - us-west1-c
+properties-configuration:
+  director_configuration: # Step 3: "Director" Config
+    allow_legacy_agents: true
+    blobstore_type: local
+    bosh_recreate_on_next_deploy: false
+    bosh_recreate_persistent_disks_on_next_deploy: false
+    database_type: internal
+    director_worker_count: 5
+    encryption:
+      keys: []
+      providers: []
+    hm_emailer_options:
+      enabled: false
+    hm_pager_duty_options:
+      enabled: false
+    identification_tags: {}
+    keep_unreachable_vms: true
+    local_blobstore_options:
+      tls_enabled: true
+    ntp_servers_string: metadata.google.internal
+    post_deploy_enabled: true
+    resurrector_enabled: true
+    retry_bosh_deploys: true
+    skip_director_drain: true
+  dns_configuration:
+    excluded_recursors: []
+    handlers: []
+  iaas_configuration: # Step 2: "Google" Config
+    additional_cloud_properties: {}
+    associated_service_account: dragonfruit-opsman@cf-sandbox-aneumann.iam.gserviceaccount.com
+    auth_json: ((auth_json))
+    default_deployment_tag: dragonfruit
+    guid: b604ac7560f5615f4144
+    name: default
+    project: cf-sandbox-aneumann
+  security_configuration: # Step 7: "Security Page" Config, Part: 2
+    generate_vm_passwords: true
+    opsmanager_root_ca_trusted_certs: true
+  syslog_configuration: # Step 8: "Syslog" Config
+    enabled: false
+resource-configuration: # Step 9: "Resource" Config
+  compilation:
+    instances: automatic
+    instance_type:
+      id: automatic
+    internet_connected: true
+  director:
+    instances: automatic
+    persistent_disk:
+      size_mb: automatic
+    instance_type:
+      id: automatic
+    internet_connected: true
+vmextensions-configuration: [] # Step 10: "Add Custom VM Extensions"
