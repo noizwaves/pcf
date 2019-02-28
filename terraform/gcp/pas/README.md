@@ -52,6 +52,7 @@ Use the following resources:
     1. Set env var `OM_USERNAME` to `<OPSMAN_USERNAME>`
     1. Set env var `OM_PASSWORD` to `<OPSMAN_PASSWORD>`
 1. `om configure-director -c config.yml` (more info at https://github.com/pivotal-cf/om/blob/master/docs/configure-director/gcp.md)
+1. Replace SSL certs with signed LE certs via `om update-ssl-certificate --certificate-pem "$(cat path/to/fullchain.pem)" --private-key-pem "$(cat path/to/privkey.pem)"`
 
 ## 3. Deploy PAS
 
@@ -69,7 +70,7 @@ Use the following resources:
 1. Download from PivNet (`om download-product -t $PIVNET_API_TOKEN -p <PRODUCT_SLUG> -v <VERSION> -f cf-*.pivotal -o ./`)
 1. Upload to Ops Manager (`om upload-product -p ./cf-*.pivotal`). PAS should appear under the "Import a Product" button (`om available-products`).
 1. Stage PAS for installation (`om stage-product -p cf -v 2.4.3`). The "Pivotal Application Service" tile should now appear in the Installation Dashboard (`om staged-products`) and require configuration.
-1. Configure PAS Settings manually by clicking on tile and following [guide](https://docs.pivotal.io/pivotalcf/2-4/customizing/gcp-er-config-terraform.html)
+1. Configure PAS Settings manually by clicking on tile and following [guide](https://docs.pivotal.io/pivotalcf/2-4/customizing/gcp-er-config-terraform.html) or `om configure-product -c cf-config.yml -l cf-variables.yml -l cf-secrets.yml`
     - "Networking"
         - Check `Disable SSL certificate verification for this environment` to trust self-signed certs
     - "Certs"
@@ -105,4 +106,5 @@ Other useful commands:
 # 6. Deleting all the things
 
 1. Delete pushed apps
-1. `om unstage-product -p cf` and `apply changes`
+1. Stage deletion of PAS tile via `om unstage-product -p cf` (verify deletion is staged via `om pending-changes`)
+1. Apply changes via `om apply changes`
