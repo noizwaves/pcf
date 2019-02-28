@@ -1,0 +1,5 @@
+# Opsman URL i.e. https://pcf.dragonfruit.63r53rk54v0r.com
+export OM_TARGET=
+export OM_USERNAME=admin
+export OM_PASSWORD=
+
