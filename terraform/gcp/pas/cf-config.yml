@@ -276,7 +276,7 @@ product-properties:
   .properties.system_database.external.diego_username:
     value: ((sql_username))
   .properties.system_database.external.host:
-    value: 35.197.63.223
+    value: ((sql_host))
   .properties.system_database.external.locket_password:
     value:
       secret: ((sql_password))

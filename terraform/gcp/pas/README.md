@@ -107,4 +107,4 @@ Other useful commands:
 
 1. Delete pushed apps
 1. Stage deletion of PAS tile via `om unstage-product -p cf` (verify deletion is staged via `om pending-changes`)
-1. Apply changes via `om apply changes`
+1. Apply changes via `om apply-changes`

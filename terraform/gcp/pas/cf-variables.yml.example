@@ -11,6 +11,8 @@ ssh_router_pool: "$(terraform output ssh_router_pool)"
 
 mysql_notification_email: "aneumann@pivotal.io"
 
+sql_host: "$(terraform output sql_db_ip)"
+
 storage_service_account: "$(terraform output storage_service_account)"
 buildpacks_bucket: "$(terraform output buildpacks_bucket)"
 droplets_bucket: "$(terraform output droplets_bucket)"
