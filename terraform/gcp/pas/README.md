@@ -95,21 +95,22 @@ Use the following resources:
     1. Preview pending changes (`om pending-changes`)
     1. Apply pending changes (`om apply-changes`) and watch the deployment at https://pcf.dragonfruit.63r53rk54v0r.com/change_log
 
-Other useful commands:
-- `pivnet product-files -p <PRODUCT_SLUG> -r <VERSION> --format=yaml` to list the available downloads for a PivNet release https://network.pivotal.io/products/elastic-runtime/#/releases/297394
-
 # 4. Gain access to PAS
 
 1. Navigate to `Ops Manager > PAS Tile > Credentials > UAA > Admin Credentials` and copy password (=> PASSWORD)
+    - or run `om credentials -p cf -c .uaa.admin_credentials`
 1. Visit https://login.sys.dragonfruit.63r53rk54v0r.com and log in with `admin:$PASSWORD`
+1. `cf target https://api.sys.dragonfruit.63r53rk54v0r.com` & `cf login`
 
 # 5. Use PAS
 
-`cf push` etc
+1. `cf create-space sandbox`
+1. `cf target -s sandbox`
+1. `cf push`
 
 # 6. Deleting all the things
 
-1. Delete pushed apps
+1. TODO: Delete pushed apps?
 1. Stage deletion of PAS tile via `om unstage-product -p cf` (verify deletion is staged via `om pending-changes`)
 1. Apply changes via `om apply-changes`
 
