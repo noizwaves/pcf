@@ -120,3 +120,5 @@ Use the following resources:
 
 Other useful commands:
 - `pivnet product-files -p <PRODUCT_SLUG> -r <VERSION> --format=yaml` to list the available downloads for a PivNet release https://network.pivotal.io/products/elastic-runtime/#/releases/297394
+- `om staged-config -p cf -c` to get the current PAS configuration
+- `om interpolate -c cf-config.yml -l cf-secrets.yml -l cf-variables.yml` to get the expected PAS configuration
