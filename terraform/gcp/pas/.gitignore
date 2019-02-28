@@ -2,3 +2,4 @@ bosh-director-secrets.yml
 bosh-director-variables.yml
 cf-secrets.yml
 cf-variables.yml
+.envrc

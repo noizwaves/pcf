@@ -8,6 +8,8 @@ TODOS:
 ### Requirements
 
 - Google Cloud SDK: `brew cask install google-cloud-sdk`
+    - `gcloud auth login`
+    - `gcloud config set project cf-sandbox-aneumann`
 - PivNet CLI: `brew install pivnet-cli`
 - Ops Manager CLI: `brew install om`
 - Certbot: `brew install certbot`
