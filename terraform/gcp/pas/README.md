@@ -5,6 +5,13 @@ How to deploy PAS onto GCP using mostly automation. The outcome will be a PCF Fo
 TODOS:
 - update instructions to use official `GCP Terraform Templates` release from PivNet
 
+### Requirements
+
+- Google Cloud SDK: `brew cask install google-cloud-sdk`
+- PivNet CLI: `brew install pivnet-cli`
+- Ops Manager CLI: `brew install om`
+- Certbot: `brew install certbot`
+
 ## 0. Certs (self signed)
 
 Either:
@@ -96,9 +103,6 @@ Other useful commands:
 1. Navigate to `Ops Manager > PAS Tile > Credentials > UAA > Admin Credentials` and copy password (=> PASSWORD)
 1. Visit https://login.sys.dragonfruit.63r53rk54v0r.com and log in with `admin:$PASSWORD`
 
-Other useful commands:
-- `pivnet product-files -p <PRODUCT_SLUG> -r <VERSION> --format=yaml` to list the available downloads for a PivNet release https://network.pivotal.io/products/elastic-runtime/#/releases/297394
-
 # 5. Use PAS
 
 `cf push` etc
@@ -108,3 +112,8 @@ Other useful commands:
 1. Delete pushed apps
 1. Stage deletion of PAS tile via `om unstage-product -p cf` (verify deletion is staged via `om pending-changes`)
 1. Apply changes via `om apply-changes`
+
+# Misc
+
+Other useful commands:
+- `pivnet product-files -p <PRODUCT_SLUG> -r <VERSION> --format=yaml` to list the available downloads for a PivNet release https://network.pivotal.io/products/elastic-runtime/#/releases/297394
