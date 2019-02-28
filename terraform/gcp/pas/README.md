@@ -4,7 +4,6 @@ How to deploy PAS onto GCP using mostly automation. The outcome will be a PCF Fo
 
 TODOS:
 - update instructions to use official `GCP Terraform Templates` release from PivNet
-- conf
 
 ## 0. Certs (self signed)
 
@@ -12,7 +11,17 @@ Either:
 
 1. Generate a self-signed cert whose Common Name is `*.dragonfruit.63r53rk54v0r.com` following https://devcenter.heroku.com/articles/ssl-certificate-self, or
 1. Generate a self-signed cert covering multiple domains of `*.dragonfruit.63r53rk54v0r.com, *.apps.dragonfruit.63r53rk54v0r.com, *.sys.dragonfruit.63r53rk54v0r.com, *.login.sys.dragonfruit.63r53rk54v0r.com, *.uaa.sys.dragonfruit.63r53rk54v0r.com` following https://medium.com/@pubudu538/how-to-create-a-self-signed-ssl-certificate-for-multiple-domains-25284c91142b
+1. Use Lets Encrypt to generate a cert (following https://medium.com/@mxplusb/lets-encrypt-with-pivotal-cloud-foundry-b128431c46b8 and adding a CAA DNS record to the domain) to finally run: 
 
+```
+sudo certbot --server https://acme-v02.api.letsencrypt.org/directory \
+> -d *.dragonfruit.63r53rk54v0r.com \
+> -d *.apps.dragonfruit.63r53rk54v0r.com \
+> -d *.sys.dragonfruit.63r53rk54v0r.com \
+> -d *.login.sys.dragonfruit.63r53rk54v0r.com \
+> -d *.uaa.sys.dragonfruit.63r53rk54v0r.com \
+> --manual --preferred-challenges dns-01 certonly
+```
 
 ## 1. Create the infrastructure
 
