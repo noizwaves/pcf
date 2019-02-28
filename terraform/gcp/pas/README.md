@@ -4,6 +4,7 @@ How to deploy PAS onto GCP using mostly automation. The outcome will be a PCF Fo
 
 TODOS:
 - update instructions to use official `GCP Terraform Templates` release from PivNet
+- product slug to be executable from direnv
 
 ### Requirements
 
@@ -13,6 +14,7 @@ TODOS:
 - PivNet CLI: `brew install pivnet-cli`
 - Ops Manager CLI: `brew install om`
 - Certbot: `brew install certbot`
+- direnv: `brew install direnv`
 
 ## 0. Certs (self signed)
 
@@ -36,15 +38,31 @@ sudo certbot --server https://acme-v02.api.letsencrypt.org/directory \
 
 Use the follow resources:
 - https://docs.pivotal.io/pivotalcf/2-4/om/gcp/prepare-env-terraform.html
+
+Clone the corresponding git repo and check out an official tag:
 - https://github.com/pivotal-cf/terraforming-gcp/tree/v0.63.0
 
-1. Run `terraform` init/plan/apply
+Or, download the release from PivNet:
+1. Set PivNet token `PIVNET_API_TOKEN` env var
+1. `pivnet login --api-token $PIVNET_API_TOKEN`
+1. Accept Elastic Runtime EULA (if required, `pivnet accept-eula -p $PAS_PRODUCT_SLUG -r $PAS_VERSION`)
+1. `om download-product -t $PIVNET_API_TOKEN -p $PAS_PRODUCT_SLUG -v $PAS_VERSION -f terraforming-gcp-*.zip -o ./`
+1. `unzip terraforming-gcp-*.zip`
+1. `cd pivotal-cf-terraforming-gcp-*/terraforming-pas`
 
-Consume the output (`terraform output`):
-1. Set env var `OM_TARGET` to `https://<ops_manager_dns>`
+Then:
+1. Edit `terraform.tfvars` with desired values
+1. Run `terraform init`
+1. Run `terraform plan -out=plan`
+1. Run `terraform apply "plan"`
+
+Consume Terraforms output:
+1. Set env var `OM_TARGET` to `https://($terraform ops_manager_dns)`
 1. Set env var `OM_SKIP_SSL_VALIDATION` to `true`
 
 ### 1.1 Google Cloud SQL
+
+TODO: I didn't need to do this!
 
 Change the SQL Mode to `TRADITIONAL`
 
@@ -57,26 +75,26 @@ SET sql_mode = 'TRADITIONAL'
 Use the following resources:
 - https://docs.pivotal.io/pivotalcf/2-4/om/gcp/config-terraform.html
 
-1. `om configure-authentication -u <OPSMAN_USERNAME> -p <OPSMAN_PASSWORD>`, and then
-    1. Set env var `OM_USERNAME` to `<OPSMAN_USERNAME>`
-    1. Set env var `OM_PASSWORD` to `<OPSMAN_PASSWORD>`
-1. `om configure-director -c config.yml` (more info at https://github.com/pivotal-cf/om/blob/master/docs/configure-director/gcp.md)
+1. Set env var `OM_USERNAME` to `admin`
+1. Set env var `OM_PASSWORD` to `$(openssl rand -base64 10)`
+1. `om configure-authentication -u $OPSMAN_USERNAME -p $OPSMAN_PASSWORD`, and then
 1. Replace SSL certs with signed LE certs via `om update-ssl-certificate --certificate-pem "$(cat path/to/fullchain.pem)" --private-key-pem "$(cat path/to/privkey.pem)"`
+1. Unset `OM_SKIP_SSL_VALIDATION`
+1. `om configure-director -c bosh-director-config.yml -l bosh-director-variables.yml -l bosh-director-secrets.yml` (more info at https://github.com/pivotal-cf/om/blob/master/docs/configure-director/gcp.md)
 
 ## 3. Deploy PAS
 
 Useful constants:
-- `PRODUCT_SLUG` = `elastic-runtime` for PAS.
-- `VERSION` = `2.4.3`. Comes from `pivnet releases -p elastic-runtime`.
+- `PAS_PRODUCT_SLUG` = `elastic-runtime` for PAS.
+- `PAS_VERSION` = `2.4.3`. Comes from `pivnet releases -p elastic-runtime`.
 
 Use the following resources:
-
 - https://docs.pivotal.io/pivotalcf/2-4/customizing/gcp-er-config-terraform.html
 
 1. `pivnet login --api-token <API_TOKEN>` where:
     - `<API_TOKEN>` is the Legacy API Token from your [PivNet profile](https://network.pivotal.io/users/dashboard/edit-profile)
-1. Accept PAS EULA (`pivnet accept-eula -p <PRODUCT_SLUG> -r <VERSION>`). The corresponding 
-1. Download from PivNet (`om download-product -t $PIVNET_API_TOKEN -p <PRODUCT_SLUG> -v <VERSION> -f cf-*.pivotal -o ./`)
+1. Accept PAS EULA (`pivnet accept-eula -p <PAS_PRODUCT_SLUG> -r <PAS_VERSION>`). The corresponding 
+1. Download from PivNet (`om download-product -t $PIVNET_API_TOKEN -p <PAS_PRODUCT_SLUG> -v <PAS_VERSION> -f cf-*.pivotal -o ./`)
 1. Upload to Ops Manager (`om upload-product -p ./cf-*.pivotal`). PAS should appear under the "Import a Product" button (`om available-products`).
 1. Stage PAS for installation (`om stage-product -p cf -v 2.4.3`). The "Pivotal Application Service" tile should now appear in the Installation Dashboard (`om staged-products`) and require configuration.
 1. Configure PAS Settings manually by clicking on tile and following [guide](https://docs.pivotal.io/pivotalcf/2-4/customizing/gcp-er-config-terraform.html) or `om configure-product -c cf-config.yml -l cf-variables.yml -l cf-secrets.yml`
@@ -119,6 +137,6 @@ Use the following resources:
 # Misc
 
 Other useful commands:
-- `pivnet product-files -p <PRODUCT_SLUG> -r <VERSION> --format=yaml` to list the available downloads for a PivNet release https://network.pivotal.io/products/elastic-runtime/#/releases/297394
+- `pivnet product-files -p <PAS_PRODUCT_SLUG> -r <PAS_VERSION> --format=yaml` to list the available downloads for a PivNet release https://network.pivotal.io/products/elastic-runtime/#/releases/297394
 - `om staged-config -p cf -c` to get the current PAS configuration
 - `om interpolate -c cf-config.yml -l cf-secrets.yml -l cf-variables.yml` to get the expected PAS configuration

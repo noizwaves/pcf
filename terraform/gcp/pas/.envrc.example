@@ -1,3 +1,10 @@
+# Constants go here!
+export PAS_PRODUCT_SLUG=elastic-runtime
+export PAS_VERSION=2.4.3
+
+# PivNet legacy token from https://network.pivotal.io/users/dashboard/edit-profile
+export PIVNET_API_TOKEN=
+
 # Opsman URL i.e. https://pcf.dragonfruit.63r53rk54v0r.com
 export OM_TARGET=
 export OM_USERNAME=admin
