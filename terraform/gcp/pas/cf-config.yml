@@ -33,7 +33,7 @@ product-properties:
   .doppler.message_drain_buffer_size:
     value: 10000
   .ha_proxy.skip_cert_verify:
-    value: true
+    value: false
   .mysql.cli_history:
     value: true
   .mysql.max_connections:

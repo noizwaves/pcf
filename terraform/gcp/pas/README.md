@@ -24,12 +24,23 @@ Use Lets Encrypt to generate a cert (following [this guide](https://medium.com/@
 
 ```
 sudo certbot --server https://acme-v02.api.letsencrypt.org/directory \
-> -d *.dragonfruit.63r53rk54v0r.com \
-> -d *.apps.dragonfruit.63r53rk54v0r.com \
-> -d *.sys.dragonfruit.63r53rk54v0r.com \
-> -d *.login.sys.dragonfruit.63r53rk54v0r.com \
-> -d *.uaa.sys.dragonfruit.63r53rk54v0r.com \
-> --manual --preferred-challenges dns-01 certonly
+  -d dragonfruit.63r53rk54v0r.com \
+  -d *.dragonfruit.63r53rk54v0r.com \
+  -d *.apps.dragonfruit.63r53rk54v0r.com \
+  -d *.sys.dragonfruit.63r53rk54v0r.com \
+  -d *.login.sys.dragonfruit.63r53rk54v0r.com \
+  -d *.uaa.sys.dragonfruit.63r53rk54v0r.com \
+  --manual --preferred-challenges dns-01 certonly
+```
+
+TODO: Possible automated steps
+```
+gcloud dns --project=cf-sandbox-aneumann record-sets transaction start --zone=dragonfruit-zone
+
+gcloud dns --project=cf-sandbox-aneumann record-sets transaction add VALUE --name=NAME.dragonfruit.63r53rk54v0r.com. --ttl=60 --type=TXT --zone=dragonfruit-zone
+...
+
+gcloud dns --project=cf-sandbox-aneumann record-sets transaction execute --zone=dragonfruit-zone
 ```
 
 #### Self Signed
