@@ -2,10 +2,6 @@
 
 How to deploy PAS onto GCP using mostly automation. The outcome will be a PCF Foundation that is running PAS and secured by a real Lets Encrypt cert
 
-TODOS:
-- update instructions to use official `GCP Terraform Templates` release from PivNet
-- product slug to be executable from direnv
-
 ### Requirements
 
 - Google Cloud SDK: `brew cask install google-cloud-sdk`
@@ -24,7 +20,7 @@ Lets Encrypt certs are preferred. Do this from the start.
 
 #### Lets Encrypt
 
-Use Lets Encrypt to generate a cert (following https://medium.com/@mxplusb/lets-encrypt-with-pivotal-cloud-foundry-b128431c46b8 and adding a CAA DNS record to the domain) to finally run: 
+Use Lets Encrypt to generate a cert (following [this guide](https://medium.com/@mxplusb/lets-encrypt-with-pivotal-cloud-foundry-b128431c46b8) and adding a CAA DNS record to the domain) to finally run: 
 
 ```
 sudo certbot --server https://acme-v02.api.letsencrypt.org/directory \
@@ -38,13 +34,12 @@ sudo certbot --server https://acme-v02.api.letsencrypt.org/directory \
 
 #### Self Signed
 
-1. Generate a self-signed cert whose Common Name is `*.dragonfruit.63r53rk54v0r.com` following https://devcenter.heroku.com/articles/ssl-certificate-self, or
-1. Generate a self-signed cert covering multiple domains of `*.dragonfruit.63r53rk54v0r.com, *.apps.dragonfruit.63r53rk54v0r.com, *.sys.dragonfruit.63r53rk54v0r.com, *.login.sys.dragonfruit.63r53rk54v0r.com, *.uaa.sys.dragonfruit.63r53rk54v0r.com` following https://medium.com/@pubudu538/how-to-create-a-self-signed-ssl-certificate-for-multiple-domains-25284c91142b
+1. Generate a self-signed cert whose Common Name is `*.dragonfruit.63r53rk54v0r.com` following [this guide](https://devcenter.heroku.com/articles/ssl-certificate-self), or
+1. Generate a self-signed cert covering multiple domains of `*.dragonfruit.63r53rk54v0r.com, *.apps.dragonfruit.63r53rk54v0r.com, *.sys.dragonfruit.63r53rk54v0r.com, *.login.sys.dragonfruit.63r53rk54v0r.com, *.uaa.sys.dragonfruit.63r53rk54v0r.com` following [this guide](https://medium.com/@pubudu538/how-to-create-a-self-signed-ssl-certificate-for-multiple-domains-25284c91142b)
 
 ### 2. Pave the infrastructure
 
-Use the follow resources:
-- https://docs.pivotal.io/pivotalcf/2-4/om/gcp/prepare-env-terraform.html
+Open the [official guide](https://docs.pivotal.io/pivotalcf/2-4/om/gcp/prepare-env-terraform.html).
 
 Clone the corresponding git repo and check out an official tag:
 - https://github.com/pivotal-cf/terraforming-gcp/tree/v0.63.0
@@ -69,25 +64,24 @@ Consume Terraforms output:
 
 ### 3. Configure Ops Manager & BOSH Director
 
-Use the following resources:
-- https://docs.pivotal.io/pivotalcf/2-4/om/gcp/prepare-env-terraform.html
+Open the [official guide](https://docs.pivotal.io/pivotalcf/2-4/om/gcp/prepare-env-terraform.html)
 
 1. Set env var `OM_USERNAME` to `admin`
 1. Set env var `OM_PASSWORD` to `$(openssl rand -base64 10)`
 1. `om configure-authentication -u $OPSMAN_USERNAME -p $OPSMAN_PASSWORD`, and then
 1. Replace SSL certs with signed LE certs via `om update-ssl-certificate --certificate-pem "$(cat path/to/fullchain.pem)" --private-key-pem "$(cat path/to/privkey.pem)"`
 1. Unset `OM_SKIP_SSL_VALIDATION`
-1. `om configure-director -c bosh-director-config.yml -l bosh-director-variables.yml -l bosh-director-secrets.yml` (more info at https://github.com/pivotal-cf/om/blob/master/docs/configure-director/gcp.md)
+1. `om configure-director -c bosh-director-config.yml -l bosh-director-variables.yml -l bosh-director-secrets.yml`
+    - more info in [the docs](https://github.com/pivotal-cf/om/blob/master/docs/configure-director/gcp.md)
 
 ### 4. Configure BOSH Director
 
-Use the following resources:
-- https://docs.pivotal.io/pivotalcf/2-4/om/gcp/config-terraform.html
+Open the [official guide](https://docs.pivotal.io/pivotalcf/2-4/om/gcp/config-terraform.html)
 
 1. `cp bosh-director-variables.yml.example bosh-director-variables.yml` and edit values
 1. `cp bosh-director-secrets.yml.example bosh-director-secrets.yml` and edit values
 1. `om configure-director -c bosh-director-config.yml -l bosh-director-variables.yml -l bosh-director-secrets.yml`
-    - more info at https://github.com/pivotal-cf/om/blob/master/docs/configure-director/gcp.md
+    - more info in [the docs](https://github.com/pivotal-cf/om/blob/master/docs/configure-director/gcp.md)
 
 ### 5. Deploy PAS
 
@@ -95,8 +89,7 @@ Useful environment variables:
 - `PAS_PRODUCT_SLUG` = `elastic-runtime` for PAS.
 - `PAS_VERSION` = `2.4.3`. Comes from `pivnet releases -p elastic-runtime`.
 
-Use the following resources:
-- https://docs.pivotal.io/pivotalcf/2-4/customizing/gcp-er-config-terraform.html
+Open the [official guide](https://docs.pivotal.io/pivotalcf/2-4/customizing/gcp-er-config-terraform.html)
 
 Configure the PAS tile:
 1. If required, `pivnet login --api-token $PIVNET_API_TOKEN`
