@@ -71,16 +71,16 @@ Open the [official guide](https://docs.pivotal.io/pivotalcf/2-4/om/gcp/prepare-e
 1. `om configure-authentication -u $OPSMAN_USERNAME -p $OPSMAN_PASSWORD`, and then
 1. Replace SSL certs with signed LE certs via `om update-ssl-certificate --certificate-pem "$(cat path/to/fullchain.pem)" --private-key-pem "$(cat path/to/privkey.pem)"`
 1. Unset `OM_SKIP_SSL_VALIDATION`
-1. `om configure-director -c bosh-director-config.yml -l bosh-director-variables.yml -l bosh-director-secrets.yml`
+1. `om configure-director -c bosh-config.yml -l bosh-variables.yml -l bosh-secrets.yml`
     - more info in [the docs](https://github.com/pivotal-cf/om/blob/master/docs/configure-director/gcp.md)
 
 ### 4. Configure BOSH Director
 
 Open the [official guide](https://docs.pivotal.io/pivotalcf/2-4/om/gcp/config-terraform.html)
 
-1. `cp bosh-director-variables.yml.example bosh-director-variables.yml` and edit values
-1. `cp bosh-director-secrets.yml.example bosh-director-secrets.yml` and edit values
-1. `om configure-director -c bosh-director-config.yml -l bosh-director-variables.yml -l bosh-director-secrets.yml -l gcp-constants.yml`
+1. `cp bosh-variables.yml.example bosh-variables.yml` and edit values
+1. `cp bosh-secrets.yml.example bosh-secrets.yml` and edit values
+1. `om configure-director -c bosh-config.yml -l bosh-variables.yml -l bosh-secrets.yml -l gcp-constants.yml`
     - more info in [the docs](https://github.com/pivotal-cf/om/blob/master/docs/configure-director/gcp.md)
 
 ### 5. Deploy PAS
