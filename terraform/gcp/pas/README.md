@@ -36,12 +36,16 @@ sudo certbot --server https://acme-v02.api.letsencrypt.org/directory \
 TODO: Possible automated steps
 ```
 gcloud dns --project=cf-sandbox-aneumann record-sets transaction start --zone=dragonfruit-zone
-
 gcloud dns --project=cf-sandbox-aneumann record-sets transaction add VALUE --name=NAME.dragonfruit.63r53rk54v0r.com. --ttl=60 --type=TXT --zone=dragonfruit-zone
 ...
-
 gcloud dns --project=cf-sandbox-aneumann record-sets transaction execute --zone=dragonfruit-zone
 ```
+
+Use the following files that are generated:
+- `fullchain.pem`:  use this in Opsman only
+- `cert.pem`: use this everywhere a cert is needed
+- `privkey.pem`: use this everywhere a private key is needed
+- `chain.pem`: use this in the GCP LB (maybe is needed? maybe not)
 
 #### Self Signed
 
@@ -129,8 +133,8 @@ Apply tge changes
 
 ### 6. Gain access to PAS
 
-1. Navigate to `Ops Manager > PAS Tile > Credentials > UAA > Admin Credentials` and copy password (=> PASSWORD)
-    - or run `om credentials -p cf -c .uaa.admin_credentials`
+1. Navigate to `Ops Manager > PAS Tile > Credentials > UAA > Admin Client Credentials` and copy password (=> PASSWORD)
+    - or run `om credentials -p cf -c .uaa.admin_client_credentials`
 1. Visit https://login.sys.dragonfruit.63r53rk54v0r.com and log in with `admin:$PASSWORD`
 1. `cf target https://api.sys.dragonfruit.63r53rk54v0r.com` & `cf login`
 
