@@ -23,12 +23,10 @@ Setup
 1. `npm install -g yml-sorter`
 
 Generate the expected configuration (what the code says)
-1. `om interpolate -c cf-config.yml -l cf-secrets.yml -l cf-variables.yml > expected.yml`
-1. `yml-sorter --input expected.yml`
+1. `om interpolate -c cf-config.yml -l cf-secrets.yml -l cf-variables.yml > expected.yml && yml-sorter --input expected.yml`
 
 Generate the actual configurtion (what is live)
-1. `om staged-config -p cf -c > actual.yml`
-1. `yml-sorter --input actual.yml`
+1. `om staged-config -p cf -c > actual.yml && yml-sorter --input actual.yml`
 
 Now compare the actual and expected configurations
 1. `diff actual.yml expected.yml`

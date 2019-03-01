@@ -392,27 +392,27 @@ resource-config:
       id: automatic
     internet_connected: true
   clock_global:
-    instances: automatic
+    instances: 1
     instance_type:
       id: automatic
     internet_connected: true
   cloud_controller:
-    instances: automatic
+    instances: 1
     instance_type:
       id: automatic
     internet_connected: true
   cloud_controller_worker:
-    instances: automatic
+    instances: 1
     instance_type:
       id: automatic
     internet_connected: true
   credhub:
-    instances: automatic
+    instances: 1
     instance_type:
       id: automatic
     internet_connected: true
   diego_brain:
-    instances: automatic
+    instances: 1
     instance_type:
       id: automatic
     internet_connected: true
@@ -424,12 +424,12 @@ resource-config:
       id: automatic
     internet_connected: true
   diego_database:
-    instances: automatic
+    instances: 1
     instance_type:
       id: automatic
     internet_connected: true
   doppler:
-    instances: automatic
+    instances: 1
     instance_type:
       id: automatic
     internet_connected: true
@@ -439,7 +439,7 @@ resource-config:
       id: automatic
     internet_connected: true
   loggregator_trafficcontroller:
-    instances: automatic
+    instances: 1
     instance_type:
       id: automatic
     internet_connected: true
@@ -461,7 +461,7 @@ resource-config:
       id: automatic
     internet_connected: true
   nats:
-    instances: automatic
+    instances: 1
     instance_type:
       id: automatic
     internet_connected: true
@@ -473,7 +473,7 @@ resource-config:
       id: automatic
     internet_connected: true
   router:
-    instances: automatic
+    instances: 1
     instance_type:
       id: automatic
     internet_connected: true
@@ -481,12 +481,12 @@ resource-config:
     - tcp:((ws_router_pool))
     - http:((http_lb_backend_name))
   syslog_adapter:
-    instances: automatic
+    instances: 1
     instance_type:
       id: automatic
     internet_connected: true
   syslog_scheduler:
-    instances: automatic
+    instances: 1
     instance_type:
       id: automatic
     internet_connected: true
@@ -498,7 +498,7 @@ resource-config:
       id: automatic
     internet_connected: true
   uaa:
-    instances: automatic
+    instances: 1
     instance_type:
       id: automatic
     internet_connected: true
