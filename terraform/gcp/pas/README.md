@@ -80,7 +80,7 @@ Open the [official guide](https://docs.pivotal.io/pivotalcf/2-4/om/gcp/config-te
 
 1. `cp bosh-director-variables.yml.example bosh-director-variables.yml` and edit values
 1. `cp bosh-director-secrets.yml.example bosh-director-secrets.yml` and edit values
-1. `om configure-director -c bosh-director-config.yml -l bosh-director-variables.yml -l bosh-director-secrets.yml`
+1. `om configure-director -c bosh-director-config.yml -l bosh-director-variables.yml -l bosh-director-secrets.yml -l gcp-constants.yml`
     - more info in [the docs](https://github.com/pivotal-cf/om/blob/master/docs/configure-director/gcp.md)
 
 ### 5. Deploy PAS
