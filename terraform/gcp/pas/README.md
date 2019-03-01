@@ -133,8 +133,8 @@ Apply tge changes
 
 ### 6. Gain access to PAS
 
-1. Navigate to `Ops Manager > PAS Tile > Credentials > UAA > Admin Client Credentials` and copy password (=> PASSWORD)
-    - or run `om credentials -p cf -c .uaa.admin_client_credentials`
+1. Navigate to `Ops Manager > PAS Tile > Credentials > UAA > Admin Credentials` and copy password (=> PASSWORD)
+    - or run `om credentials -p cf -c .uaa.admin_credentials`
 1. Visit https://login.sys.dragonfruit.63r53rk54v0r.com and log in with `admin:$PASSWORD`
 1. `cf target https://api.sys.dragonfruit.63r53rk54v0r.com` & `cf login`
 
