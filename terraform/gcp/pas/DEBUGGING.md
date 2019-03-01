@@ -17,8 +17,10 @@ For `dragonfruit` environment name at `63r53rk54v0r.com` DNS.
 
 ## Diffing deployments
 
-Comparing diffs of configuration (using [yml-sorter](https://www.npmjs.com/package/yml-sorter))
-- `npm install -g yml-sorter`
+Unfortunately `om interpolate` and `om staged-config` produce differently ordered YAML. To compare equivalents, we must sort first (using [yml-sorter](https://www.npmjs.com/package/yml-sorter)).
+
+Setup
+1. `npm install -g yml-sorter`
 
 Generate the expected configuration (what the code says)
 1. `om interpolate -c cf-config.yml -l cf-secrets.yml -l cf-variables.yml > expected.yml`
