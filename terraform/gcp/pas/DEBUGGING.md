@@ -29,4 +29,4 @@ Generate the actual configurtion (what is live)
 1. `om staged-config -p cf -c > actual.yml && yml-sorter --input actual.yml`
 
 Now compare the actual and expected configurations
-1. `diff actual.yml expected.yml`
+1. `diff -U10 actual.yml expected.yml`

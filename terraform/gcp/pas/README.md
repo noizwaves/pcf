@@ -77,7 +77,7 @@ Consume Terraforms output:
 1. Set env var `OM_TARGET` to `https://($terraform ops_manager_dns)`
 1. Set env var `OM_SKIP_SSL_VALIDATION` to `true`
 
-### 3. Configure Ops Manager & BOSH Director
+### 3. Configure Ops Manager
 
 Open the [official guide](https://docs.pivotal.io/pivotalcf/2-4/om/gcp/prepare-env-terraform.html)
 
@@ -144,28 +144,28 @@ Apply tge changes
 1. `cf target -s sandbox`
 1. `cf push`
 
-### 6. Deleting all the things
+### 8. Deleting all the things
 
-#### 6.1 Deleting PAS
+#### 8.1 Deleting PAS
 
 1. TODO: Delete pushed apps?
 1. Stage deletion of PAS tile via `om unstage-product -p cf`
     - verify deletion is staged via `om pending-changes`
 1. Apply changes via `om apply-changes`
 
-#### 6.2 Deleting BOSH Director
+#### 8.2 Deleting BOSH Director
 
 1. Stage deletion of BOSH via `om unstage-product -p p-bosh`
     - verify deletion is staged via `om pending-changes`
 1. Apply changes via `om apply-changes`
 
-#### 6.3 Unpave the infrastructure
+#### 8.3 Unpave the infrastructure
 
 1. `terraform destroy`
 
 ## Misc
 
 Other useful commands:
-- `pivnet product-files -p <PAS_PRODUCT_SLUG> -r <PAS_VERSION> --format=yaml` to list the available downloads for a PivNet release https://network.pivotal.io/products/elastic-runtime/#/releases/297394
+- `pivnet product-files -p $PAS_PRODUCT_SLUG -r $PAS_VERSION --format=yaml` to list the available downloads for a PivNet release https://network.pivotal.io/products/elastic-runtime/#/releases/297394
 - `om staged-config -p cf -c` to get the current PAS configuration
 - `om interpolate -c cf-config.yml -l cf-secrets.yml -l cf-variables.yml` to get the expected PAS configuration
