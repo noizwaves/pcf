@@ -20,7 +20,7 @@ Lets Encrypt certs are preferred. Do this from the start.
 
 #### Lets Encrypt
 
-Use Lets Encrypt to generate a cert (following [this guide](https://medium.com/@mxplusb/lets-encrypt-with-pivotal-cloud-foundry-b128431c46b8) and adding a CAA DNS record to the domain) to finally run: 
+Use Lets Encrypt to generate a cert (following [this guide](https://medium.com/@mxplusb/lets-encrypt-with-pivotal-cloud-foundry-b128431c46b8) and adding a CAA DNS record `0 issue "letsencrypt.org"` to the domain) to finally run:
 
 ```
 sudo certbot --server https://acme-v02.api.letsencrypt.org/directory \

@@ -3,3 +3,4 @@ bosh-variables.yml
 cf-secrets.yml
 cf-variables.yml
 .envrc
+certs/
