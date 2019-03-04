@@ -1,0 +1,15 @@
+creds.tfvars
+.envrc
+
+# BBL generated stuffs
+bosh-deployment/
+cloud-config/
+jumpbox-deployment/
+runtime-config/
+terraform/
+vars/
+bbl-state.json
+create-director.sh
+create-jumpbox.sh
+delete-director.sh
+delete-jumpbox.sh

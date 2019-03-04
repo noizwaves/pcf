@@ -1,0 +1,4 @@
+subscription_id = "from $BBL_AZURE_SUBSCRIPTION_ID"
+tenant_id = "from $BBL_AZURE_TENANT_ID"
+client_id = "from $BBL_AZURE_CLIENT_ID"
+client_secret = "from $BBL_AZURE_CLIENT_SECRET"
