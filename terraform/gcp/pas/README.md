@@ -83,7 +83,7 @@ Open the [official guide](https://docs.pivotal.io/pivotalcf/2-4/om/gcp/prepare-e
 
 1. Set env var `OM_USERNAME` to `admin`
 1. Set env var `OM_PASSWORD` to `$(openssl rand -base64 10)`
-1. `om configure-authentication -u $OM_USERNAME -p $OM_PASSWORD -dp <SOME_DECRYPTION_PASSPHRASE>`, and then
+1. `om configure-authentication -u $OM_USERNAME -p $OM_PASSWORD -dp <SOME_DECRYPTION_PASSPHRASE>`
 1. Replace SSL certs with signed LE certs via `om update-ssl-certificate --certificate-pem "$(cat path/to/fullchain.pem)" --private-key-pem "$(cat path/to/privkey.pem)"`
 1. Unset `OM_SKIP_SSL_VALIDATION`
 1. `om configure-director -c bosh-config.yml -l bosh-variables.yml -l bosh-secrets.yml`
