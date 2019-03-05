@@ -160,4 +160,4 @@ Figure out the Azure VM Extensions using [CPI docs](https://bosh.io/docs/azure-c
 1. `credhub login -u $UAA_ADMIN_USERNAME -p $UAA_ADMIN_PASSWORD`
 1. `credhub get -n $(credhub find | grep uaa_users_admin | awk '{print $3}')` -> `$CP_PASSWORD`
 
-1. Visit [https://plane.eggplant.63r53rk54v0r.com/] and log in with `admin/$CP_PASSWORD`
+1. Visit [https://plane.eggplant.63r53rk54v0r.com/]() and log in with `admin/$CP_PASSWORD`
