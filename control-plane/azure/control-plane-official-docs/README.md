@@ -4,10 +4,11 @@ Following the [offical documentation](https://control-plane-docs.cfapps.io/guide
 
 ## Requirements
 
-- `pivnet` cli
 - Certbot: `brew install certbot`
+- PivNet CLI: `brew install pivnet-cli`
+- Ops Manager CLI: `brew install om`
 
-## X. Create service account
+## 1. Create service account
 
 Using the [official steps](https://github.com/genevieve/az-automation)
 
@@ -16,7 +17,7 @@ Using the [official steps](https://github.com/genevieve/az-automation)
 1. `az-automation --account <ACCOUNT_NAME_FROM_CLI> --identifier-uri http://eggplant.63r53rk54v0r.com --display-name eggplant-cp  --credential-output-file creds.tfvars`
     - where `ACCOUNT_NAME_FROM_CLI` is derived from running `az account list`
 
-## X. Pave infrastructure with Terraform scripts
+## 2. Pave infrastructure with Terraform scripts
 
 1. `git clone https://github.com/pivotal-cf/terraforming-azure.git`
 1. `cp creds.tfvars terraforming-azure/terraforming-control-plane/terraform.tfvars`
@@ -28,7 +29,7 @@ Using the [official steps](https://github.com/genevieve/az-automation)
 1. `terraform plan -out=plan`
 1. `terraform apply plan`
 
-## X. Generate certs
+## 3. Generate certs
 
 TODO: Is the CAA record actually required?
 
@@ -52,7 +53,7 @@ TODO: Is the CAA record actually required?
     1. `cp lets-encrypt-vars.yml.example lets-encrypt-vars.yml`
     1. Fill in contents from each file in `./certs`
 
-## X. Configure Ops Manager
+## 4. Configure Ops Manager
 
 Following the [configuration guide](https://docs.pivotal.io/pivotalcf/2-4/om/azure/config-terraform.html)
 
@@ -62,7 +63,7 @@ Following the [configuration guide](https://docs.pivotal.io/pivotalcf/2-4/om/azu
 1. `om update-ssl-certificate --certificate-pem "$(cat certs/fullchain.pem)" --private-key-pem "$(cat certs/privkey.pem)"`
 1. Unset env var `OM_SKIP_SSL_VALIDATION`
 
-## X. Configure BOSH Director
+## 5. Configure BOSH Director
 
 Following the [configuration guide](https://docs.pivotal.io/pivotalcf/2-4/om/azure/config-terraform.html)
 
@@ -70,7 +71,7 @@ Following the [configuration guide](https://docs.pivotal.io/pivotalcf/2-4/om/azu
 1. `om apply-changes -i`, where
     - `-i` ignores the warnings about ICMP checks failing
 
-## X. Download releases
+## 6. Download releases
 
 1. Accept EULA via `pivnet accept-eula -p p-control-plane-components -r 0.0.25`
 1. Download control plane component releases via 
@@ -85,7 +86,7 @@ Following the [configuration guide](https://docs.pivotal.io/pivotalcf/2-4/om/azu
 1. Look up stemcell from [release manifest](https://network.pivotal.io/products/p-control-plane-components/). Use the major version to determine latest version of Stemcell to download.
 1. `om download-product -t $PIVNET_API_TOKEN -p stemcells-ubuntu-xenial -v 170.30 -f bosh-stemcell-170.30-azure-hyperv-ubuntu-xenial-go_agent.tgz -o ./releases/`
 
-## X. Upload releases to jumpbox (aka Ops Manager)
+## 7. Upload releases to jumpbox (aka Ops Manager)
 
 Prep local environment variables:
 1. Set env var `OPS_MANAGER_KEY_PATH` to `opsman.key`
@@ -100,7 +101,7 @@ Copy files to `~/control-plane-assets` on Ops Manager
 1. `ssh -i $OPS_MANAGER_KEY_PATH "ubuntu@${OPS_MANAGER_VM_URL}" mkdir control-plane-assets/operations`
 1. `scp -i $OPS_MANAGER_KEY_PATH operations/* "ubuntu@${OPS_MANAGER_VM_URL}":~/control-plane-assets/operations`
 
-## X. Upload releases to BOSH
+## 8. Upload releases to BOSH
 
 1. Locate the [Bosh Commandlie Credentials](https://pcf.eggplant.63r53rk54v0r.com/api/v0/deployed/director/credentials/bosh_commandline_credentials)
 1. SSH onto Opsman via `ssh -i $OPS_MANAGER_KEY_PATH "ubuntu@${OPS_MANAGER_VM_URL}"`
@@ -123,7 +124,7 @@ Copy files to `~/control-plane-assets` on Ops Manager
     bosh upload-release uaa-release-*.tgz
     ```
 
-## X. Update Cloud Config
+## 9. Update Cloud Config
 
 Figure out the Azure VM Extensions using [CPI docs](https://bosh.io/docs/azure-cpi/) and [Azure console](https://portal.azure.com/#blade/HubsExtension/Resources/resourceType/Microsoft.Network%2FNetworkSecurityGroups):
 
@@ -138,7 +139,7 @@ Figure out the Azure VM Extensions using [CPI docs](https://bosh.io/docs/azure-c
     ```
 1. Update cloud config via `bosh update-cloud-config cc.yml`
 
-## X. Deploy Control Plane
+## 10. Deploy Control Plane
 
 1. Deploy control plane deployment via
     ```
