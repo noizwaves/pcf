@@ -4,3 +4,4 @@ opsman.key
 terraforming-azure/*
 releases/*
 certs/*
+platform-automation/*

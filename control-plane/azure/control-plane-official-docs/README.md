@@ -7,6 +7,7 @@ Following the [offical documentation](https://control-plane-docs.cfapps.io/guide
 - Certbot: `brew install certbot`
 - PivNet CLI: `brew install pivnet-cli`
 - Ops Manager CLI: `brew install om`
+- [Minio Client](https://docs.minio.io/docs/minio-client-complete-guide)
 
 ## 1. Create service account
 
@@ -161,3 +162,56 @@ Figure out the Azure VM Extensions using [CPI docs](https://bosh.io/docs/azure-c
 1. `credhub get -n $(credhub find | grep uaa_users_admin | awk '{print $3}')` -> `$CP_PASSWORD`
 
 1. Visit [https://plane.eggplant.63r53rk54v0r.com/]() and log in with `admin/$CP_PASSWORD`
+
+## 11. Deploy Minio
+
+Perform a [standard Minio deployment](https://github.com/minio/minio-boshrelease)
+
+TODO:
+- Explore using [Minio tile](https://network.pivotal.io/products/minio/) or [Minio internal blobstore for PCF tile](https://network.pivotal.io/products/minio-internal-blobstore/) instead of BOSH release
+
+1. Download Trusty Stemcell via `pivnet download-product-files -p stemcells -r 3421.117 -g "*azure*" --accept-eula`
+1. Copy Stemcell to Ops Man via `scp -i $OPS_MANAGER_KEY_PATH bosh-stemcell-3421.117-azure-hyperv-ubuntu-trusty-go_agent.tgz "ubuntu@${OPS_MANAGER_VM_URL}":~/minio`
+1. Upload Stemcell to BOSH via `bosh upload-stemcell *trusty*.tgz`
+1. Upload Minio release via `bosh upload-release https://bosh.io/d/github.com/minio/minio-boshrelease`
+1. Set env var `$MINIO_SECRET_KEY` to `$(openssl rand -base64 32)`
+1. Deploy Minio via
+    ```
+    bosh deploy -d minio minio-deployment.yml \
+        -v minio_deployment_name=minio \
+        -v minio_accesskey=admin \
+        -v minio_secretkey=$MINIO_SECRET_KEY
+    ```
+
+## 12. Download Platform Automation
+
+Locally, run
+1. `mkdir platform-automation`
+1. `pivnet download-product-files -p platform-automation -r 2.1.1-beta.1 -g "*" -d platform-automation --accept-eula`
+
+## 13. Upload Platform Automation artifacts to Ops Manager
+
+Locally, run
+1. `scp -i $OPS_MANAGER_KEY_PATH platform-automation/* "ubuntu@${OPS_MANAGER_VM_URL}":~/minio`
+
+## 14. Upload Platform Automation artifacts to blob store
+
+1. SSH into Ops Manager
+1. `export MC_HOSTS_controlplane=http://admin:$MINIO_SECRET_KEY@10.0.10.14:9000`
+1. `./mc mb controlplane/my-bucket`
+1. `./mc cp platform-automation-image-2.1.1-beta.1.tgz controlplane/my-bucket`
+1. `./mc cp platform-automation-tasks-2.1.1-beta.1.zip controlplane/my-bucket`
+
+## 15. Run the test pipeline
+
+Resuming the [Platform Automation guide](http://docs-platform-automation.cfapps.io/platform-automation/v2.1/)
+
+1. Set the test pipeline to confirm configuration
+    ```
+    fly -t eggplant set-pipeline -p test-pipeline -c test-pipeline.yml \
+        --var=access_key_id=admin \
+        --var=secret_access_key=$MINIO_SECRET_KEY \
+        --var=endpoint=http://10.0.10.14:9000 \
+        --var=bucket=my-bucket
+    ```
+1. Unpause the pipeline and trigger the build manually
