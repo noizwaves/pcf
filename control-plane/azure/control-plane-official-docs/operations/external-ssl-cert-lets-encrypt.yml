@@ -1,0 +1,31 @@
+# ATC's cert
+- type: replace
+  path: /instance_groups/name=web/jobs/name=atc/properties/tls_cert?
+  value: ((lets_encrypt_certificate.fullchain))
+
+- type: replace
+  path: /instance_groups/name=web/jobs/name=atc/properties/tls_key?
+  value: ((lets_encrypt_certificate.privkey))
+
+# ATC's connection to UAA
+- type: replace
+  path: /instance_groups/name=web/jobs/name=atc/properties/generic_oauth/token_url?
+  value: ((external_url)):8443/oauth/token
+
+- type: replace
+  path: /instance_groups/name=web/jobs/name=atc/properties/generic_oauth/userinfo_url?
+  value: ((external_url)):8443/userinfo
+
+# UAA's cert
+- type: replace
+  path: /instance_groups/name=web/jobs/name=uaa/properties/uaa/sslCertificate?
+  value: ((lets_encrypt_certificate.cert))
+
+- type: replace
+  path: /instance_groups/name=web/jobs/name=uaa/properties/uaa/sslPrivateKey?
+  value: ((lets_encrypt_certificate.privkey))
+
+# Add chain to UAA
+- type: replace
+  path: /instance_groups/name=web/jobs/name=uaa/properties/uaa/ca_certs/-
+  value: ((lets_encrypt_certificate.chain))

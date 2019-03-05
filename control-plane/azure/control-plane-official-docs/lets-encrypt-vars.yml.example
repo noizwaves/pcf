@@ -1,0 +1,9 @@
+lets_encrypt_certificate:
+  cert: |
+    contents of cert.pem
+  chain: |
+    contents of chain.pem
+  privkey: |
+    contents of privkey.pem
+  fullchain: |
+    contents of fullchain.pem

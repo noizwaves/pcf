@@ -1,0 +1,6 @@
+lets-encrypt-vars.yml
+opsman.key
+.envrc
+terraforming-azure/*
+releases/*
+certs/*
