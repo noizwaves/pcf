@@ -1,4 +1,4 @@
-# ATC's cert
+# ATC's cert, why fullchain? See https://github.com/concourse/concourse/issues/1599#issuecomment-330257264
 - type: replace
   path: /instance_groups/name=web/jobs/name=atc/properties/tls_cert?
   value: ((lets_encrypt_certificate.fullchain))
