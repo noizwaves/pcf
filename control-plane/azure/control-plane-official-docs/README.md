@@ -68,7 +68,8 @@ Following the [configuration guide](https://docs.pivotal.io/pivotalcf/2-4/om/azu
 
 Following the [configuration guide](https://docs.pivotal.io/pivotalcf/2-4/om/azure/config-terraform.html)
 
-1. `om configure-director -c director-config.yml`
+1. `cp director-vars.yml.example director-vars.yml` and manually evaluate placeholders
+1. `om configure-director -c director-config.yml -l director-vars.yml`
 1. `om apply-changes -i`, where
     - `-i` ignores the warnings about ICMP checks failing
 

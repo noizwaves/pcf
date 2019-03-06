@@ -1,0 +1,84 @@
+network-assignment:
+  network:
+    name: infrastructure
+  other_availability_zones: []
+networks-configuration:
+  icmp_checks_enabled: true
+  networks:
+  - name: control-plane
+    subnets:
+    - iaas_identifier: ((env_name))-virtual-network/((env_name))-plane-subnet
+      cidr: 10.0.10.0/28
+      dns: 168.63.129.16
+      gateway: 10.0.10.1
+      reserved_ip_ranges: 10.0.10.1-10.0.10.10
+      availability_zone_names:
+      - "null"
+  - name: infrastructure
+    subnets:
+    - iaas_identifier: ((env_name))-virtual-network/((env_name))-infrastructure-subnet
+      cidr: 10.0.8.0/26
+      dns: 168.63.129.16
+      gateway: 10.0.8.1
+      reserved_ip_ranges: 10.0.8.1-10.0.8.10
+      availability_zone_names:
+      - "null"
+properties-configuration:
+  director_configuration:
+    allow_legacy_agents: true
+    blobstore_type: local
+    bosh_recreate_on_next_deploy: true
+    bosh_recreate_persistent_disks_on_next_deploy: true
+    database_type: internal
+    director_worker_count: 5
+    encryption:
+      keys: []
+      providers: []
+    excluded_recursors: []
+    hm_emailer_options:
+      enabled: false
+    hm_pager_duty_options:
+      enabled: false
+    identification_tags: {}
+    keep_unreachable_vms: true
+    local_blobstore_options:
+      tls_enabled: true
+    ntp_servers_string: time.nist.gov
+    post_deploy_enabled: true
+    resurrector_enabled: true
+    retry_bosh_deploys: true
+    skip_director_drain: true
+  dns_configuration:
+    handlers: []
+  iaas_configuration:
+    bosh_storage_account_name: ((bosh_storage_account_name))
+    client_id: ((client_id))
+    cloud_storage_type: managed_disks
+    default_security_group: ((env_name))-bosh-deployed-vms-security-group
+    environment: AzureCloud
+    guid: 0173bae3da816675c017
+    name: default
+    resource_group_name: ((env_name))
+    ssh_public_key: ((ssh_public_key))
+    storage_account_type: Premium_LRS
+    subscription_id: ((subscription_id))
+    tenant_id: ((tenant_id))
+  security_configuration:
+    generate_vm_passwords: true
+  syslog_configuration:
+    enabled: false
+resource-configuration:
+  compilation:
+    instances: automatic
+    instance_type:
+      id: automatic
+    internet_connected: false
+  director:
+    instances: automatic
+    persistent_disk:
+      size_mb: automatic
+    instance_type:
+      id: automatic
+    internet_connected: false
+vmextensions-configuration: []
+

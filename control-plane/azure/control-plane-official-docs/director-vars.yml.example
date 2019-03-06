@@ -1,0 +1,8 @@
+env_name: "from terraform.tfvars 'env_name'"
+
+client_id: "`terraform output client_id`"
+subscription_id: "`terraform output subscription_id`"
+tenant_id: "`terraform output tenant_id`"
+
+bosh_storage_account_name: "`terraform output bosh_root_storage_account`"
+ssh_public_key: "`terraform output ops_manager_ssh_public_key`"
