@@ -3,8 +3,8 @@ pivnet_token: "$PIVNET_API_TOKEN"
 
 credhub:
   server: "BOSH Director IP address":8844
-  client: admin
-  secret: "[UAA Admin User Credentials](https://pcf.eggplant.63r53rk54v0r.com/api/v0/deployed/director/credentials/uaa_admin_user_credentials"
+  client: "Created Concourse/Credhub client id:credhub-grape"
+  secret: "$CONCOURSE_CREDHUB_SECRET"
   ca_cert: "/var/tempest/workspaces/default/root_ca_certificate from CP opsman"
 
 configuration:
