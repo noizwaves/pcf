@@ -27,7 +27,7 @@ resources:
     access_key_id: ((s3.access_key_id))
     bucket: ((s3.buckets.pivnet_products))
     secret_access_key: ((s3.secret_access_key))
-    regexp: pcf-vsphere-(.*).ova
+    regexp: OpsManager(.*)Azure.yml
 
 - name: platform-automation-pivnet
   type: pivnet
