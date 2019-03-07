@@ -33,7 +33,7 @@ instance_groups:
   networks:
   - name: control-plane
   vm_type: Standard_F1s
-  persistent_disk_type: 2048
+  persistent_disk_type: 102400
   stemcell: default
 
 update:
