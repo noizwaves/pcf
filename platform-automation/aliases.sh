@@ -1,0 +1,2 @@
+alias p-automator="docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image p-automator"
+alias pa-run="docker run -it --rm -v $PWD:/workspace -w /workspace platform-automation-image"
