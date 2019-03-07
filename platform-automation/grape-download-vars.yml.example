@@ -1,15 +1,16 @@
 ---
 pivnet_token: "$PIVNET_API_TOKEN"
 
-# credhub:
-  # server: "BOSH Director IP address":8844
-  # client: admin
-  # secret: "[UAA Admin User Credentials](https://pcf.eggplant.63r53rk54v0r.com/api/v0/deployed/director/credentials/uaa_admin_user_credentials"
+credhub:
+  server: "BOSH Director IP address":8844
+  client: admin
+  secret: "[UAA Admin User Credentials](https://pcf.eggplant.63r53rk54v0r.com/api/v0/deployed/director/credentials/uaa_admin_user_credentials"
+  ca_cert: "/var/tempest/workspaces/default/root_ca_certificate from CP opsman"
 
-# configuration:
-  # private_key: |
-    # Generated locally and uploaded to github
-  # uri: git@github.com:USERNAME/CONFIG-REPO.git
+configuration:
+  private_key: |
+    Generated locally and uploaded to github
+  uri: git@github.com:USERNAME/CONFIG-REPO.git
 
 s3:
   endpoint: http://"$MINIO_IP_ADDRESS":9000

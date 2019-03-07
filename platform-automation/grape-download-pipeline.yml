@@ -6,28 +6,28 @@ resource_types:
     tag: latest-final
 
 resources:
-# - name: daily
-#   type: time
-#   source:
-#     interval: 24h
+- name: daily
+  type: time
+  source:
+    interval: 24h
 
-# - name: config
-#   type: git
-#   source:
-#     private_key: ((configuration.private_key))
-#     uri: ((configuration.uri))
-#     branch: master
-#     submodules: all
-#     depth: 1
+- name: config
+  type: git
+  source:
+    private_key: ((configuration.private_key))
+    uri: ((configuration.uri))
+    branch: master
+    submodules: all
+    depth: 1
 
-# - name: opsman-product
-  # type: s3
-  # source:
-  #   endpoint: ((s3.endpoint))
-  #   access_key_id: ((s3.access_key_id))
-  #   bucket: ((s3.buckets.pivnet_products))
-  #   secret_access_key: ((s3.secret_access_key))
-  #   regexp: pcf-vsphere-(.*).ova
+- name: opsman-product
+  type: s3
+  source:
+    endpoint: ((s3.endpoint))
+    access_key_id: ((s3.access_key_id))
+    bucket: ((s3.buckets.pivnet_products))
+    secret_access_key: ((s3.secret_access_key))
+    regexp: pcf-vsphere-(.*).ova
 
 - name: platform-automation-pivnet
   type: pivnet
@@ -56,40 +56,57 @@ resources:
     regexp: platform-automation-image-(.*).tgz
 
 jobs:
-# - name: fetch-opsman
-#   plan:
-#   - aggregate:
-#     - get: daily
-#       trigger: true
-#     - get: platform-automation-image
-#       params:
-#         unpack: true
-#     - get: platform-automation-tasks
-#       params:
-#         unpack: true
-#     - get: config
-#   - task: credhub-interpolate
-#     image: platform-automation-image
-#     file: platform-automation-tasks/tasks/credhub-interpolate.yml
-#     params:
-#       CREDHUB_CLIENT: ((credhub.client))
-#       CREDHUB_SECRET: ((credhub.secret))
-#       CREDHUB_SERVER: ((credhub.server))
-#       PREFIX: '/pipeline/vsphere'
-#       INTERPOLATION_PATH: "download-product-configs"
-#     input_mapping:
-#       files: config
-#     output_mapping:
-#       interpolated-files: config
-#   - task: download-opsman-image
-#     image: platform-automation-image
-#     file: platform-automation-tasks/tasks/download-product.yml
-#     params:
-#       CONFIG_FILE: download-product-configs/opsman.yml
-#   - aggregate:
-#     - put: opsman-product
-#       params:
-#         file: downloaded-product/*
+- name: fetch-opsman
+  plan:
+  - aggregate:
+    - get: daily
+      trigger: true
+    - get: platform-automation-image
+      params:
+        unpack: true
+    - get: platform-automation-tasks
+      params:
+        unpack: true
+    - get: config
+  # - task: write-credhub-ca-cert
+  #   params:
+  #     CA_CERT_VALUE: ((credhub.ca_cert))
+  #   config: 
+  #     platform: linux
+  #     image_resource:
+  #       type: docker-image
+  #       source:
+  #         repository: alpine
+  #         tag: edge
+  #     run:
+  #       path: /bin/sh
+  #       args:
+  #       - -c
+  #       - |
+  #         echo $CA_CERT_VALUE > credhub_ca_cert
+  - task: credhub-interpolate
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/credhub-interpolate.yml
+    params:
+      CREDHUB_CLIENT: ((credhub.client))
+      CREDHUB_SECRET: ((credhub.secret))
+      CREDHUB_SERVER: ((credhub.server))
+      CREDHUB_CA_CERT: ((credhub.ca_cert))
+      PREFIX: '/pipeline/grape'
+      INTERPOLATION_PATH: "download-product-configs"
+    input_mapping:
+      files: config
+    output_mapping:
+      interpolated-files: config
+  - task: download-opsman-image
+    image: platform-automation-image
+    file: platform-automation-tasks/tasks/download-product.yml
+    params:
+      CONFIG_FILE: download-product-configs/opsman.yml
+  - aggregate:
+    - put: opsman-product
+      params:
+        file: downloaded-product/*
 
 - name: fetch-platform-automation
   plan:
