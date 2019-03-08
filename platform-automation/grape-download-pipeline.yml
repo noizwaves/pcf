@@ -165,9 +165,9 @@ jobs:
       params:
         CA_CERT_VALUE: ((credhub.ca_cert))
       output_mapping:
-        certs: config
+        certs: variable
       input_mapping:
-        files: config
+        files: variable
       config:
         platform: linux
         image_resource:
@@ -202,9 +202,9 @@ jobs:
         PREFIX: '/pipeline/grape'
         INTERPOLATION_PATH: "((foundation))"
       input_mapping:
-        files: config
+        files: variable
       output_mapping:
-        interpolated-files: config
+        interpolated-files: variable
 
     # - task: create-vm
     #   image: platform-automation-image
@@ -238,31 +238,31 @@ jobs:
     #         params:
     #           repository: configuration-commit
     #           merge: true
-    - task: configure-authentication
-      image: platform-automation-image
-      file: platform-automation-tasks/tasks/configure-authentication.yml
-      attempts: 10
-      input_mapping:
-        env: config
-        config: config
-      params:
-        ENV_FILE: ((foundation))/env/env.yml
-        AUTH_CONFIG_FILE: ((foundation))/config/auth.yml
-    # - task: configure-director
+    # - task: configure-authentication
     #   image: platform-automation-image
-    #   file: platform-automation-tasks/tasks/configure-director.yml
+    #   file: platform-automation-tasks/tasks/configure-authentication.yml
+    #   attempts: 10
     #   input_mapping:
-    #     config: configuration
-    #     env: configuration
-    #     vars: variable
+    #     env: config
+    #     config: config
     #   params:
-    #     VARS_FILES: vars/((foundation))/vars/director-vars.yml
     #     ENV_FILE: ((foundation))/env/env.yml
-    #     DIRECTOR_CONFIG_FILE: ((foundation))/config/director.yml
+    #     AUTH_CONFIG_FILE: ((foundation))/config/auth.yml
+    - task: configure-director
+      image: platform-automation-image
+      file: platform-automation-tasks/tasks/configure-director.yml
+      input_mapping:
+        config: config
+        env: config
+        vars: variable
+      params:
+        VARS_FILES: vars/((foundation))/vars/director-vars.yml
+        ENV_FILE: ((foundation))/env/env.yml
+        DIRECTOR_CONFIG_FILE: director.yml
     # - task: apply-director-changes
-      # image: platform-automation-image
-      # file: platform-automation-tasks/tasks/apply-director-changes.yml
-      # input_mapping:
-      #   env: configuration
-      # params:
-      #   ENV_FILE: ((foundation))/env/env.yml
+    # image: platform-automation-image
+    # file: platform-automation-tasks/tasks/apply-director-changes.yml
+    # input_mapping:
+    #   env: configuration
+    # params:
+    #   ENV_FILE: ((foundation))/env/env.yml

@@ -80,3 +80,10 @@ Create Ops Manager secrets via
 1. Log into Credhub via `credhub login -u $UAA_ADMIN_USERNAME -p $UAA_ADMIN_PASSWORD`
 1. `credhub n -n /pipeline/grape/opsman-admin-user -t user -z admin`
 1. `credhub n -n /pipeline/grape/opsman-decryption-passphrase -t password`
+
+At some point manually create `/pipeline/grape/opsman_ssh`
+[Manual Director config](https://docs.pivotal.io/pivotalcf/2-4/om/azure/config-terraform.html) via
+- `Application ID` is the `client id`
+- `SSH private key` from `credhub get -n /pipeline/grape/opsman_ssh -k private_key`
+- `SSH public key` from `credhub get -n /pipeline/grape/opsman_ssh -k public_key`
+
