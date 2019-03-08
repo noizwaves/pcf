@@ -3,6 +3,7 @@
 ## TODOs
 
 - https://github.com/pivotal-cloudops/azure-blobstore-concourse-resource
+- update terraform to create the opsman required buckets
 
 
 ## Requirements
@@ -58,5 +59,24 @@ https://docs-platform-automation.cfapps.io/platform-automation/v2.1/reference/pi
 1. `fly -t eggplant sp -p grape -c grape-download-pipeline.yml -l grape-download-vars.yml`
 1. `fly -t eggplant unpause-pipeline -p grape-pipeline`
 
-cat files/credhub_ca_cert | sed -E 's/\s+/\r\n/g'
-cat files/credhub_ca_cert | sed -E 's/\s+/\r\n/g' | sed '/^\-/ d' | sed '/-$/d' | sed '/$CERT/d'
+## X. Pave infrastructure for a foundation
+
+TODO: explore `ops_manager_vm` variable on terraforming-pas as alternative to commenting out all the things
+
+1. clone terraforming-azure as terraforming-((environment))
+1. cd terraforming-((environment))/terraforming-pas
+1. run the az-automation command
+1. comment out the `ops_manager` resource from main.tf and all output references
+1. fenangle the terraform.tfvars
+1. `terraform init`
+1. `terraform plan -out=plan`
+1. `terraform apply plan`
+1. Manually create a storage account and container for opsman through Azure UI
+1. Run `install-opsman` task
+1. Add DNS entry for `pcf` to point to `grape-ops-manager-vm`
+
+Create Ops Manager secrets via
+1. SSH into Control Plane Ops Manager
+1. Log into Credhub via `credhub login -u $UAA_ADMIN_USERNAME -p $UAA_ADMIN_PASSWORD`
+1. `credhub n -n /pipeline/grape/opsman-admin-user -t user -z admin`
+1. `credhub n -n /pipeline/grape/opsman-decryption-passphrase -t password`
