@@ -2,6 +2,9 @@
 
 Following the [offical documentation](https://control-plane-docs.cfapps.io/guide.html) (docs source [here](https://github.com/pivotal/control-plane-docs/)).
 
+TODO:
+- ensure `SSH private key` and `client secret` are captured in `director-config.yml`
+
 ## Requirements
 
 - Certbot: `brew install certbot`
