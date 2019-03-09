@@ -11,3 +11,7 @@
 - [Deploying PAS to GCP using Terraform](./terraform/gcp/pas/README.md)
 - [Deploying Control Plane to Azure](./control-plane/azure/control-plane-official-docs/README.md)
 - [Deploying PAS to Azure using Platform Automation](./platform-automation/README.md)
+
+## External Resources
+
+- [Using Terraform, Concourse, and om to Continuously Deploy Pivotal Cloud Foundry's Elastic Runtime](http://engineering.pivotal.io/post/release-engineering-deploying-ert/)
