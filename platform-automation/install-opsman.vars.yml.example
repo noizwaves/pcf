@@ -1,16 +1,23 @@
 ---
+foundation: "$FOUNDATION_NAME_SLUG"
+
 pivnet_token: "$PIVNET_API_TOKEN"
 
 credhub:
   server: "BOSH Director IP address":8844
-  client: "Created Concourse/Credhub client id:credhub-grape"
+  client: "Control Plane created Concourse/Credhub client id:credhub-grape"
   secret: "$CONCOURSE_CREDHUB_SECRET"
   ca_cert: "/var/tempest/workspaces/default/root_ca_certificate from CP opsman"
 
 configuration:
   private_key: |
-    Generated locally and uploaded to github
+    $(Generated locally and uploaded to github)
   uri: git@github.com:USERNAME/CONFIG-REPO.git
+
+variable:
+  private_key: |
+    $(Generated locally and uploaded to github)
+  uri: git@github.com:USERNAME/VARIABLE-REPO.git
 
 s3:
   endpoint: http://"$MINIO_IP_ADDRESS":9000
@@ -18,3 +25,4 @@ s3:
   secret_access_key: "$MINIO_SECRET_KEY"
   buckets:
     pivnet_products: pivnet-products
+    installation: installation
