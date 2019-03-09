@@ -6,13 +6,14 @@ Walkthrough: deploy a foundation (named `grape`) from a control plane (named `eg
 
 - Use: https://github.com/pivotal-cloudops/azure-blobstore-concourse-resource
 - Describe the contents and creation of the `config` and `variables` repositories
+- Refactor variables so that Control Plane provides Minio storage and Credhub credentials
 
 ## Requirements
 
 - Docker for Mac
 - PivNet CLI: `brew install pivnet-cli`
 
-## Running locally
+## Running locally (optional)
 
 Following [the docs](http://docs-platform-automation.cfapps.io/platform-automation/v2.1/reference/running-commands-locally.html)
 
