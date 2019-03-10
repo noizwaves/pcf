@@ -219,3 +219,34 @@ Resuming the [Platform Automation guide](http://docs-platform-automation.cfapps.
         --var=bucket=my-bucket
     ```
 1. Unpause the pipeline and trigger the build manually
+
+## 16. Use control plane
+
+...
+
+## 17. Turning off all the things
+
+### Delete Minio deployment
+
+1. SSH into Ops Manager
+1. `cd minio`
+1. `source envrc`
+1. Delete Minio deployment via `bosh delete-deployment`
+
+### Delete Control Plane deployment
+
+1. SSH into Ops Manager
+1. `cd ~`
+1. `source envrc`
+1. Delete Control Plane deployment via `bosh delete-deployment`
+
+### Delete BOSH Director deployment
+
+1. Stage deletion of BOSH via `om unstage-product -p p-bosh`
+    - verify deletion is staged via `om pending-changes`
+1. Apply changes via `om apply-changes`
+
+### Unpave the IAAS
+
+1. `cd terraforming-azure/terraforming-control-plane`
+1. `terraform destroy`
