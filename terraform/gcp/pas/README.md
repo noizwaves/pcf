@@ -20,6 +20,8 @@ Lets Encrypt certs are preferred. Do this from the start.
 
 #### Lets Encrypt
 
+TODO: Automate cert generation with [Terraform](https://www.terraform.io/docs/providers/acme/r/certificate.html)
+
 Use Lets Encrypt to generate a cert (following [this guide](https://medium.com/@mxplusb/lets-encrypt-with-pivotal-cloud-foundry-b128431c46b8) and adding a CAA DNS record `0 issue "letsencrypt.org"` to the domain) to finally run:
 
 ```
@@ -31,14 +33,6 @@ sudo certbot --server https://acme-v02.api.letsencrypt.org/directory \
   -d *.login.sys.dragonfruit.63r53rk54v0r.com \
   -d *.uaa.sys.dragonfruit.63r53rk54v0r.com \
   --manual --preferred-challenges dns-01 certonly
-```
-
-TODO: Possible automated steps
-```
-gcloud dns --project=cf-sandbox-aneumann record-sets transaction start --zone=dragonfruit-zone
-gcloud dns --project=cf-sandbox-aneumann record-sets transaction add VALUE --name=NAME.dragonfruit.63r53rk54v0r.com. --ttl=60 --type=TXT --zone=dragonfruit-zone
-...
-gcloud dns --project=cf-sandbox-aneumann record-sets transaction execute --zone=dragonfruit-zone
 ```
 
 Use the following files that are generated:
@@ -56,16 +50,15 @@ Use the following files that are generated:
 
 Open the [official guide](https://docs.pivotal.io/pivotalcf/2-4/om/gcp/prepare-env-terraform.html).
 
-Clone the corresponding git repo and check out an official tag:
-- https://github.com/pivotal-cf/terraforming-gcp/tree/v0.63.0
-
-Or, download the release from PivNet:
-1. Set PivNet token `PIVNET_API_TOKEN` env var
-1. `pivnet login --api-token $PIVNET_API_TOKEN`
-1. Accept Elastic Runtime EULA (if required, `pivnet accept-eula -p $PAS_PRODUCT_SLUG -r $PAS_VERSION`)
-1. `om download-product -t $PIVNET_API_TOKEN -p $PAS_PRODUCT_SLUG -v $PAS_VERSION -f terraforming-gcp-*.zip -o ./`
-1. `unzip terraforming-gcp-*.zip`
-1. `cd pivotal-cf-terraforming-gcp-*/terraforming-pas`
+Download the Terraform automation code via either:
+- Clone the corresponding git repo and check out an official tag: https://github.com/pivotal-cf/terraforming-gcp/tree/v0.63.0, or
+- Download the release from PivNet:
+    1. Set PivNet token `PIVNET_API_TOKEN` env var
+    1. `pivnet login --api-token $PIVNET_API_TOKEN`
+    1. Accept Elastic Runtime EULA (if required, `pivnet accept-eula -p $PAS_PRODUCT_SLUG -r $PAS_VERSION`)
+    1. `om download-product -t $PIVNET_API_TOKEN -p $PAS_PRODUCT_SLUG -v $PAS_VERSION -f terraforming-gcp-*.zip -o ./`
+    1. `unzip terraforming-gcp-*.zip`
+    1. `cd pivotal-cf-terraforming-gcp-*/terraforming-pas`
 
 Then:
 1. Edit `terraform.tfvars` with desired values
@@ -143,6 +136,7 @@ Apply tge changes
 1. `cf create-space sandbox`
 1. `cf target -s sandbox`
 1. `cf push`
+1. etc
 
 ### 8. Deleting all the things
 
