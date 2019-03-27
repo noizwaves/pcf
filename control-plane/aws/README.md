@@ -81,60 +81,13 @@ In the root DNS Zone (Azure) add a NS record with values `terraform output env_d
 
 ## X. Configure BOSH Director
 
-Using the [documentation](https://docs.pivotal.io/pivotalcf/2-4/om/aws/config-terraform.html).
-
 If a config is available, simply do:
 1. `cp director-vars.yml.example director-vars.yml`
 1. Update values in `director-vars.yml` to be correct
 1. `om configure-director --config director-config.yml --vars-file director-vars.yml`
 1. `om apply-changes`
 
-### Step 1. Access Ops Manager
-
-Visit [Ops Manager](https://pcf.cp.aws.63r53rk54v0r.com) and log in with `$OM_USERNAME` and `$OM_PASSWORD`.
-
-### Step 2. AWS Config
-
-1. Fill in values for
-    1. Access Key ID from `terraform output ops_manager_iam_user_access_key`
-    1. AWS Secret Key from `terraform output ops_manager_iam_user_secret_key`
-    1. Security Group ID from `terraform output vms_security_group_id`
-    1. Key Pair Name from `terraform output ops_manager_ssh_public_key_name`
-    1. SSH Private Key from `terraform output ops_manager_ssh_private_key`
-    1. Region from `terraform.tfvars`, `region` key
-
-### Step 3. Director Config
-
-1. Fill in values for
-    1. NTP Servers with `0.amazon.pool.ntp.org,1.amazon.pool.ntp.org,2.amazon.pool.ntp.org,3.amazon.pool.ntp.org`
-    1. Database location with `Internal Database`
-
-### Step 4. Create Availability Zones
-
-1. For each of the availability zones listed in `terraform output infrastructure_subnet_availability_zones`:
-    1. Click add
-    1. Enter in the AZ name
-
-### Step 5. Networks
-
-1. Do not check ICMP checks
-1. Add a network for `infrastructure`
-    1. `terraform output infrastructure_subnet_ids`
-1. Add a network for `control-plane`
-    1. `terraform output control_plane_subnet_ids`
-
-### Step 6. Assign AZs and Networks
-
-1. Singleton Availability Zone pick `us-west-1b`
-1. Network pick `infrastructure`
-
-### Step 7 - 10
-
-1. Don't change anything
-
-### Apply changes
-
-1. `om apply-changes`
+Note: see Appendix A for how the director file was created
 
 ## X. Download releases to jumpbox
 
@@ -239,3 +192,56 @@ Using Ops Manager as a jumpbox.
 
 1. `cd terraforming-aws/terraforming-control-plane`
 1. `terraform destroy`
+
+## Appendix A - Creating a BOSH Director config
+
+This documents how the `director-config.yml` was created.
+Basically following the [documentation](https://docs.pivotal.io/pivotalcf/2-4/om/aws/config-terraform.html).
+
+### Step 1. Access Ops Manager
+
+Visit [Ops Manager](https://pcf.cp.aws.63r53rk54v0r.com) and log in with `$OM_USERNAME` and `$OM_PASSWORD`.
+
+### Step 2. AWS Config
+
+1. Fill in values for
+    1. Access Key ID from `terraform output ops_manager_iam_user_access_key`
+    1. AWS Secret Key from `terraform output ops_manager_iam_user_secret_key`
+    1. Security Group ID from `terraform output vms_security_group_id`
+    1. Key Pair Name from `terraform output ops_manager_ssh_public_key_name`
+    1. SSH Private Key from `terraform output ops_manager_ssh_private_key`
+    1. Region from `terraform.tfvars`, `region` key
+
+### Step 3. Director Config
+
+1. Fill in values for
+    1. NTP Servers with `0.amazon.pool.ntp.org,1.amazon.pool.ntp.org,2.amazon.pool.ntp.org,3.amazon.pool.ntp.org`
+    1. Database location with `Internal Database`
+
+### Step 4. Create Availability Zones
+
+1. For each of the availability zones listed in `terraform output infrastructure_subnet_availability_zones`:
+    1. Click add
+    1. Enter in the AZ name
+
+### Step 5. Networks
+
+1. Do not check ICMP checks
+1. Add a network for `infrastructure`
+    1. `terraform output infrastructure_subnet_ids`
+1. Add a network for `control-plane`
+    1. `terraform output control_plane_subnet_ids`
+
+### Step 6. Assign AZs and Networks
+
+1. Singleton Availability Zone pick `us-west-1b`
+1. Network pick `infrastructure`
+
+### Step 7 - 10
+
+1. Don't change anything
+
+### Capture to file
+
+1. `om staged-director-config -c > director-config.yml`
+1. Add missing `iaas_configuration` keys and values by inspecting Ops Manager DOM elements
