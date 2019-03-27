@@ -62,7 +62,7 @@ Specs include:
 1. Run `terraform plan -out=plan`
 1. Run `terraform apply plan`
 1. Obtain the Ops Manager SSH key via `terraform output ops_manager_ssh_private_key > ../../opsman.pem`
-1. `chmod 600 opsman.pem`
+1. `chmod 600 ../../opsman.pem`
 
 ## X. Configure root DNS
 
@@ -70,10 +70,12 @@ In the root DNS Zone (Azure) add a NS record with values `terraform output env_d
 
 ## X. Configure Ops Manager
 
+1. Set env var `OM_TARGET` to `https://pcf.cp.aws.63r53rk54v0r.com`
 1. Set env var `OM_USERNAME` to `admin`
 1. Set env var `OM_PASSWORD` to `$(openssl rand -base64 10)`
 1. Set env var `OM_DP` to `$(openssl rand -base64 32)`
 1. Configure auth via `om -k configure-authentication -u $OM_USERNAME -p $OM_PASSWORD -dp $OM_DP`
+1. Unset env var `OM_DP`
 1. Specify certs via `om -k update-ssl-certificate --certificate-pem "$(cat certs/fullchain.pem)" --private-key-pem "$(cat certs/privkey.pem)"`
 
 ## X. Configure BOSH Director
@@ -84,6 +86,7 @@ If a config is available, simply do:
 1. `cp director-vars.yml.example director-vars.yml`
 1. Update values in `director-vars.yml` to be correct
 1. `om configure-director --config director-config.yml --vars-file director-vars.yml`
+1. `om apply-changes`
 
 ### Step 1. Access Ops Manager
 
