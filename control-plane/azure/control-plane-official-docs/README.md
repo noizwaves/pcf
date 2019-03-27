@@ -4,6 +4,7 @@ Following the [offical documentation](https://control-plane-docs.cfapps.io/guide
 
 TODO:
 - ensure `SSH private key` and `client secret` are captured in `director-config.yml`
+- explore using `om delete-installation` to tear down Ops Manager
 
 ## Requirements
 
@@ -108,9 +109,9 @@ Copy files to `~/control-plane-assets` on Ops Manager
 
 ## 8. Upload releases to BOSH
 
-1. Locate the [Bosh Commandlie Credentials](https://pcf.eggplant.63r53rk54v0r.com/api/v0/deployed/director/credentials/bosh_commandline_credentials)
+1. Locate the [Bosh Commandline Credentials](https://pcf.eggplant.63r53rk54v0r.com/api/v0/deployed/director/credentials/bosh_commandline_credentials)
 1. SSH onto Opsman via `ssh -i $OPS_MANAGER_KEY_PATH "ubuntu@${OPS_MANAGER_VM_URL}"`
-1. Set the following environment variables using `Bosh Commandlie Credentials`:
+1. Set the following environment variables using `Bosh Commandline Credentials`:
     ```
     export BOSH_CLIENT=<YOUR_CLIENT>
     export BOSH_CLIENT_SECRET=<YOUR_SECRET>
@@ -119,7 +120,7 @@ Copy files to `~/control-plane-assets` on Ops Manager
     export BOSH_DEPLOYMENT=control-plane
     ```
 1. Navigate to assets dir via `cd ~/control-plane-assets`
-1. Upload Stelcell via `bosh upload-stemcell *bosh-stemcell*.tgz`
+1. Upload Stemcell via `bosh upload-stemcell *bosh-stemcell*.tgz`
 1. Upload releases via
     ```
     bosh upload-release concourse-release-*.tgz && \
