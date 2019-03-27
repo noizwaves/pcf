@@ -4,6 +4,7 @@ Following the [official documentation](https://control-plane-docs.cfapps.io/) to
 
 Specs include:
 - Ops Manager 2.4.6
+- Control Plane 0.0.27
 
 ## Prerequisites
 
@@ -165,6 +166,8 @@ Using Ops Manager as a jumpbox.
 
 ## X. Upload assets to jumpbox
 
+1. Set env var `OPS_MANAGER_VM_URL` to `pcf.cp.aws.63r53rk54v0r.com`
+1. Set env var `OPS_MANAGER_KEY_PATH` to `opsman.pem`
 1. Create remote asset directory via  `ssh -i $OPS_MANAGER_KEY_PATH "ubuntu@${OPS_MANAGER_VM_URL}" mkdir control-plane-assets`
 1. Copy all assets via 
     ```
@@ -221,7 +224,7 @@ Using Ops Manager as a jumpbox.
 
 ...
 
-## 17. Turning off all the things
+## X. Turning off all the things
 
 ### Delete Control Plane deployment
 
