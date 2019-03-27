@@ -2,7 +2,7 @@ lets-encrypt-vars.yml
 opsman.key
 .envrc
 director-vars.yml
-terraforming-azure/*
+terraforming-azure/
 releases/*
 certs/*
 platform-automation/*
