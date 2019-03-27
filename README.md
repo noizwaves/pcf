@@ -10,6 +10,7 @@
 
 - [Deploying PAS to GCP using Terraform](./terraform/gcp/pas/README.md)
 - [Deploying Control Plane to Azure](./control-plane/azure/control-plane-official-docs/README.md)
+- [Deploying Control Plane to Azure](./control-plane/aws/README.md)
 - [Deploying PAS to Azure using Platform Automation](./platform-automation/README.md)
 
 ## External Resources
