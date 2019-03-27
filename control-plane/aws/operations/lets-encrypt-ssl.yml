@@ -1,0 +1,22 @@
+# ATC's cert, why fullchain? See https://github.com/concourse/concourse/issues/1599#issuecomment-330257264
+- type: replace
+  path: /instance_groups/name=web/jobs/name=atc/properties/tls_cert?
+  value: ((lets_encrypt_certificate.fullchain))
+
+- type: replace
+  path: /instance_groups/name=web/jobs/name=atc/properties/tls_key?
+  value: ((lets_encrypt_certificate.privkey))
+
+# UAA's cert
+- type: replace
+  path: /instance_groups/name=web/jobs/name=uaa/properties/uaa/sslCertificate?
+  value: ((lets_encrypt_certificate.cert))
+
+- type: replace
+  path: /instance_groups/name=web/jobs/name=uaa/properties/uaa/sslPrivateKey?
+  value: ((lets_encrypt_certificate.privkey))
+
+# Add chain to UAA
+- type: replace
+  path: /instance_groups/name=web/jobs/name=uaa/properties/uaa/ca_certs/-
+  value: ((lets_encrypt_certificate.chain))

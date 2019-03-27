@@ -1,0 +1,15 @@
+external_url: https://plane.cp.aws.63r53rk54v0r.com
+persistent_disk_type: 10240
+network_name: control-plane
+azs: ["us-west-1b", "us-west-1c"]
+vm_type: c4.xlarge
+wildcard_domain: blah
+lets_encrypt_certificate:
+  cert: |
+    contents of certs/cert.pem
+  chain: |
+    contents of certs/chain.pem
+  privkey: |
+    contents of certs/privkey.pem
+  fullchain: |
+    contents of certs/fullchain.pem

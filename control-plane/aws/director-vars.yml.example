@@ -1,0 +1,11 @@
+---
+env_name: "terraform output env_name"
+security_group: "terraform output vms_security_group_id"
+infrastructure_subnet_b: terraform output infrastructure_subnet_ids
+infrastructure_subnet_c: terraform output infrastructure_subnet_ids
+control_plane_subnet_b: terraform output control_plane_subnet_ids
+control_plane_subnet_c: terraform output control_plane_subnet_ids
+access_key_id: "terraform output ops_manager_iam_user_access_key"
+secret_access_key: "terraform output ops_manager_iam_user_secret_key"
+ssh_private_key: |
+  terraform output ops_manager_ssh_private_key

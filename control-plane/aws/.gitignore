@@ -1,0 +1,9 @@
+certs/
+releases/
+stemcells/
+terraforming-aws/
+
+.envrc
+control-plane-vars.yml
+director-vars.yml
+opsman.pem
