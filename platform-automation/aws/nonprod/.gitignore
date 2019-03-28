@@ -1,0 +1,5 @@
+certs/
+deploy_keys/
+terraforming-aws/
+
+secrets.yml
