@@ -3,3 +3,4 @@ deploy_keys/
 terraforming-aws/
 
 secrets.yml
+opsman.pem

@@ -1,4 +1,5 @@
 certs/
+logs/
 releases/
 stemcells/
 terraforming-aws/
