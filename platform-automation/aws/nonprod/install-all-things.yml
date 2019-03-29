@@ -35,23 +35,23 @@ resources:
       secret_access_key: ((s3.secret_access_key))
       regexp: OpsManager(.*)onAWS.yml
 
-  # - name: pas-stemcell
-  #   type: s3
-  #   source:
-  #     access_key_id: ((s3.access_key_id))
-  #     secret_access_key: ((s3.secret_access_key))
-  #     region_name: ((s3.region_name))
-  #     bucket: ((s3.buckets.pivnet_products))
-  #     regexp: pas-stemcell/light-bosh-stemcell-(.*)-aws.*\.tgz
+  - name: pas-stemcell
+    type: s3
+    source:
+      access_key_id: ((s3.access_key_id))
+      secret_access_key: ((s3.secret_access_key))
+      region_name: ((s3.region_name))
+      bucket: ((s3.buckets.pivnet_products))
+      regexp: pas-stemcell/light-bosh-stemcell-(.*)-aws.*\.tgz
 
-  # - name: pas-product
-  #   type: s3
-  #   source:
-  #     access_key_id: ((s3.access_key_id))
-  #     secret_access_key: ((s3.secret_access_key))
-  #     region_name: ((s3.region_name))
-  #     bucket: ((s3.buckets.pivnet_products))
-  #     regexp: cf-(.*).pivotal
+  - name: pas-product
+    type: s3
+    source:
+      access_key_id: ((s3.access_key_id))
+      secret_access_key: ((s3.secret_access_key))
+      region_name: ((s3.region_name))
+      bucket: ((s3.buckets.pivnet_products))
+      regexp: cf-(.*).pivotal
 
   # configurations
   - name: configuration
@@ -242,38 +242,38 @@ jobs:
   #       params:
   #         ENV_FILE: ((foundation))/env/env.yml
 
-  # - name: upload-and-stage-pas
-  #   serial: true
-  #   plan:
-  #     - aggregate:
-  #         - get: platform-automation-image
-  #           params:
-  #             unpack: true
-  #           passed:
-  #             - upgrade-opsman
-  #           trigger: true
-  #         - get: platform-automation-tasks
-  #           params:
-  #             unpack: true
-  #         - get: pas-product
-  #         - get: configuration
-  #         - get: variable
-  #     - task: upload-product
-  #       image: platform-automation-image
-  #       file: platform-automation-tasks/tasks/upload-product.yml
-  #       input_mapping:
-  #         product: pas-product
-  #         env: configuration
-  #       params:
-  #         ENV_FILE: ((foundation))/env/env.yml
-  #     - task: stage-product
-  #       image: platform-automation-image
-  #       file: platform-automation-tasks/tasks/stage-product.yml
-  #       input_mapping:
-  #         product: pas-product
-  #         env: configuration
-  #       params:
-  #         ENV_FILE: ((foundation))/env/env.yml
+  - name: upload-and-stage-pas
+    serial: true
+    plan:
+      - aggregate:
+          - get: platform-automation-image
+            params:
+              unpack: true
+            # passed:
+            #   - upgrade-opsman
+            trigger: true
+          - get: platform-automation-tasks
+            params:
+              unpack: true
+          - get: pas-product
+          - get: configuration
+          - get: variable
+      - task: upload-product
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/upload-product.yml
+        input_mapping:
+          product: pas-product
+          env: configuration
+        params:
+          ENV_FILE: ((foundation))/env/env.yml
+      - task: stage-product
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/stage-product.yml
+        input_mapping:
+          product: pas-product
+          env: configuration
+        params:
+          ENV_FILE: ((foundation))/env/env.yml
 
   # - name: configure-pas
   #   serial: true
@@ -299,57 +299,57 @@ jobs:
   #         vars: variable
   #       params:
   #         CONFIG_FILE: ((foundation))/config/cf.yml
-  #         VARS_FILES: vars/((foundation))/vars/cf-vars.yml
+  #         VARS_FILES: vars/((foundation))/cf-vars.yml
   #         ENV_FILE: ((foundation))/env/env.yml
 
-  # - name: upload-stemcells
-  #   serial: true
-  #   plan:
-  #     - aggregate:
-  #         - get: platform-automation-image
-  #           params:
-  #             unpack: true
-  #           passed:
-  #             - upgrade-opsman
-  #           trigger: true
-  #         - get: platform-automation-tasks
-  #           params:
-  #             unpack: true
-  #         - get: pas-stemcell
-  #           trigger: true
-  #         - get: configuration
-  #         - get: variable
-  #     - task: upload-pas-stemcell
-  #       image: platform-automation-image
-  #       file: platform-automation-tasks/tasks/upload-stemcell.yml
-  #       input_mapping:
-  #         env: configuration
-  #         stemcell: pas-stemcell
-  #       params:
-  #         ENV_FILE: ((foundation))/env/env.yml
+  - name: upload-stemcells
+    serial: true
+    plan:
+      - aggregate:
+          - get: platform-automation-image
+            params:
+              unpack: true
+            # passed:
+            #   - upgrade-opsman
+            trigger: true
+          - get: platform-automation-tasks
+            params:
+              unpack: true
+          - get: pas-stemcell
+            trigger: true
+          - get: configuration
+          - get: variable
+      - task: upload-pas-stemcell
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/upload-stemcell.yml
+        input_mapping:
+          env: configuration
+          stemcell: pas-stemcell
+        params:
+          ENV_FILE: ((foundation))/env/env.yml
 
-  # - name: apply-product-changes
-  #   serial: true
-  #   plan:
-  #     - aggregate:
-  #         - get: platform-automation-image
-  #           params:
-  #             unpack: true
-  #           passed:
-  #             - configure-pas
-  #           trigger: true
-  #         - get: platform-automation-tasks
-  #           params:
-  #             unpack: true
-  #         - get: configuration
-  #         - get: variable
-  #     - task: apply-product-changes
-  #       image: platform-automation-image
-  #       file: platform-automation-tasks/tasks/apply-changes.yml
-  #       input_mapping:
-  #         env: configuration
-  #       params:
-  #         ENV_FILE: ((foundation))/env/env.yml
+  - name: apply-product-changes
+    serial: true
+    plan:
+      - aggregate:
+          - get: platform-automation-image
+            params:
+              unpack: true
+            passed:
+              - upload-and-stage-pas
+            trigger: true
+          - get: platform-automation-tasks
+            params:
+              unpack: true
+          - get: configuration
+          - get: variable
+      - task: apply-product-changes
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/apply-changes.yml
+        input_mapping:
+          env: configuration
+        params:
+          ENV_FILE: ((foundation))/env/env.yml
 
   # - name: staged-pas-config
   #   plan:

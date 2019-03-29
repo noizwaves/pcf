@@ -28,3 +28,5 @@ TODOS
 - create S3 buckets in control plane terraforming
 - common descriptions/creation of Github repos and keys
 - change to use CP credhub (not ops man credhub)
+- use RDS for database instead of internal
+- upload certificates
