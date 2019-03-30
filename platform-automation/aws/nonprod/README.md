@@ -22,6 +22,8 @@ http://docs.pivotal.io/platform-automation/v2.1/index.html
     1. `credhub login --client-name=credhub-automation --client-secret=$CONCOURSE_CREDHUB_SECRET`
     1. `credhub set -n /pipeline/nonprod/pivnet-token -t value -v $PIVNET_API_TOKEN`
 
+`om create-vm-extension -n web-lb-security-groups -cp '{ "security_groups": ["web_lb_security_group", "vms_security_group"] }'`
+
 TODOS
 
 - credhub for secrets
@@ -30,3 +32,4 @@ TODOS
 - change to use CP credhub (not ops man credhub)
 - use RDS for database instead of internal
 - upload certificates
+- base pas configuration, with operations capturing features?
