@@ -2,5 +2,6 @@ certs/
 deploy_keys/
 terraforming-aws/
 
+.envrc
 secrets.yml
 opsman.pem
