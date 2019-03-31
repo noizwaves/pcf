@@ -68,6 +68,15 @@ resources:
       uri: ((variable.uri))
       branch: master
 
+  - name: certificate
+    type: s3
+    source:
+      access_key_id: ((s3.access_key_id))
+      secret_access_key: ((s3.secret_access_key))
+      region_name: ((s3.region_name))
+      bucket: ((s3.buckets.platform))
+      regexp: nonprod/lets-encrypt-nonprod.aws.63r53rk54v0r.com.tgz
+
   # triggers used to have jobs do something in a timely manner
   - name: one-time-trigger
     type: time
@@ -96,6 +105,9 @@ jobs:
           - get: opsman-image
           - get: configuration
           - get: variable
+          - get: certificate
+            params:
+              unpack: true
       - task: create-vm
         image: platform-automation-image
         file: platform-automation-tasks/tasks/create-vm.yml
@@ -138,6 +150,32 @@ jobs:
         params:
           ENV_FILE: ((foundation))/env/env.yml
           AUTH_CONFIG_FILE: ((foundation))/config/auth.yml
+      - task: configure-ssl
+        image: platform-automation-image
+        config:
+          platform: linux
+          inputs:
+          - name: env
+          - name: certificate
+          params:
+            ENV_FILE: env.yml
+            FULL_CHAIN_FILE: fullchain.pem
+            PRIVKEY_FILE: privkey.pem
+          run:
+            path: sh
+            args:
+            - -c
+            - |
+              cat /var/version && echo ""
+              set -eux
+              om --env env/"${ENV_FILE}" update-ssl-certificate \
+                --certificate-pem "$(cat certificate/${FULL_CHAIN_FILE})" \
+                --private-key-pem "$(cat certificate/${PRIVKEY_FILE})"
+        input_mapping:
+          env: configuration
+          certificate: certificate
+        params:
+          ENV_FILE: ((foundation))/env/env.yml
       - task: configure-director
         image: platform-automation-image
         file: platform-automation-tasks/tasks/configure-director.yml
@@ -156,7 +194,6 @@ jobs:
           env: configuration
         params:
           ENV_FILE: ((foundation))/env/env.yml
-
   # - name: staged-director-config
   #   serial: true
   #   plan:
