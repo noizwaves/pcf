@@ -160,6 +160,7 @@ Using Ops Manager as a jumpbox.
     -d control-plane \
     -o operations/use-load-balancer.yml \
     -o operations/lets-encrypt-ssl.yml \
+    -o operations/rc-0.0.27-uaa-fix.yml \
     -l control-plane-vars.yml
     ```
 
