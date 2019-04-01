@@ -28,6 +28,7 @@ resources:
     region_name: ((s3.region_name))
     secret_access_key: ((s3.secret_access_key))
     regexp: OpsManager(.*)onAWS.yml
+    # regexp: ops-manager-aws-(.*).yml
 
 - name: pas-product
   type: s3

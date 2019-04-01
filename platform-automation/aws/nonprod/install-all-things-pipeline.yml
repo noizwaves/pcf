@@ -34,6 +34,7 @@ resources:
       region_name: ((s3.region_name))
       secret_access_key: ((s3.secret_access_key))
       regexp: OpsManager(.*)onAWS.yml
+      # regexp: ops-manager-aws-(.*).yml
 
   - name: pas-stemcell
     type: s3
@@ -237,47 +238,47 @@ jobs:
         params:
           file: installation/installation-nonprod*.zip
 
-  # - name: upgrade-opsman
-  #   serial: true
-  #   serial_groups: [ install ]
-  #   plan:
-  #     - aggregate:
-  #         - get: one-time-trigger
-  #           passed: [ install-opsman ]
-  #         - get: platform-automation-image
-  #           params:
-  #             unpack: true
-  #           trigger: true
-  #         - get: platform-automation-tasks
-  #           params:
-  #             unpack: true
-  #         - get: opsman-image
-  #         - get: installation
-  #           passed: [ export-installation ]
-  #         - get: configuration
-  #         - get: variable
-  #     - task: upgrade-opsman
-  #       image: platform-automation-image
-  #       file: platform-automation-tasks/tasks/upgrade-opsman.yml
-  #       input_mapping:
-  #         image: opsman-image
-  #         state: configuration
-  #         config: configuration
-  #         env: configuration
-  #         vars: variable
-  #       params:
-  #         VARS_FILES: vars/((foundation))/vars/opsman-vars.yml
-  #         ENV_FILE: ((foundation))/env/env.yml
-  #         OPSMAN_CONFIG_FILE: ((foundation))/config/opsman.yml
-  #         STATE_FILE: ((foundation))/state/state.yml
-  #       ensure: *make-state-commit
-  #     - task: apply-director-changes
-  #       image: platform-automation-image
-  #       file: platform-automation-tasks/tasks/apply-director-changes.yml
-  #       input_mapping:
-  #         env: configuration
-  #       params:
-  #         ENV_FILE: ((foundation))/env/env.yml
+  - name: upgrade-opsman
+    serial: true
+    serial_groups: [ install ]
+    plan:
+      - aggregate:
+          - get: one-time-trigger
+            passed: [ install-opsman ]
+          - get: platform-automation-image
+            params:
+              unpack: true
+            trigger: true
+          - get: platform-automation-tasks
+            params:
+              unpack: true
+          - get: opsman-image
+          - get: installation
+            passed: [ export-installation ]
+          - get: configuration
+          - get: variable
+      - task: upgrade-opsman
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/upgrade-opsman.yml
+        input_mapping:
+          image: opsman-image
+          state: configuration
+          config: configuration
+          env: configuration
+          vars: variable
+        params:
+          VARS_FILES: vars/((foundation))/opsman-vars.yml
+          ENV_FILE: ((foundation))/env/env.yml
+          OPSMAN_CONFIG_FILE: ((foundation))/config/opsman.yml
+          STATE_FILE: ((foundation))/state/state.yml
+        ensure: *make-state-commit
+      - task: apply-director-changes
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/apply-director-changes.yml
+        input_mapping:
+          env: configuration
+        params:
+          ENV_FILE: ((foundation))/env/env.yml
 
   - name: upload-and-stage-pas
     serial: true
