@@ -17,14 +17,14 @@ resources:
       bucket: ((s3.buckets.pivnet_products))
       regexp: .*image-(.*).tgz
 
-  # - name: installation
-  #   type: s3
-  #   source:
-  #     access_key_id: ((s3.access_key_id))
-  #     secret_access_key: ((s3.secret_access_key))
-  #     region_name: ((s3.region_name))
-  #     bucket: ((s3.buckets.installation))
-  #     regexp: installation-(.*).zip
+  - name: installation
+    type: s3
+    source:
+      access_key_id: ((s3.access_key_id))
+      secret_access_key: ((s3.secret_access_key))
+      region_name: ((s3.region_name))
+      bucket: ((s3.buckets.installation))
+      regexp: installation-(.*).zip
 
   - name: opsman-image
     type: s3
@@ -83,10 +83,10 @@ resources:
     source:
       interval: 999999h
 
-  # - name: daily-trigger
-  #   type: time
-  #   source:
-  #     interval: 24h
+  - name: daily-trigger
+    type: time
+    source:
+      interval: 24h
 
 jobs:
   - name: install-opsman
@@ -211,31 +211,31 @@ jobs:
   #       params:
   #         ENV_FILE: ((foundation))/env/env.yml
 
-  # - name: export-installation
-  #   serial: true
-  #   plan:
-  #     - aggregate:
-  #         - get: daily-trigger
-  #           trigger: true
-  #         - get: platform-automation-image
-  #           params:
-  #             unpack: true
-  #         - get: platform-automation-tasks
-  #           params:
-  #             unpack: true
-  #         - get: configuration
-  #         - get: variable
-  #     - task: export-installation
-  #       image: platform-automation-image
-  #       file: platform-automation-tasks/tasks/export-installation.yml
-  #       input_mapping:
-  #         env: configuration
-  #       params:
-  #         ENV_FILE: ((foundation))/env/env.yml
-  #         INSTALLATION_FILE: installation-$timestamp.zip
-  #     - put: installation
-  #       params:
-  #         file: installation/installation*.zip
+  - name: export-installation
+    serial: true
+    plan:
+      - aggregate:
+          - get: daily-trigger
+            trigger: true
+          - get: platform-automation-image
+            params:
+              unpack: true
+          - get: platform-automation-tasks
+            params:
+              unpack: true
+          - get: configuration
+          - get: variable
+      - task: export-installation
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/export-installation.yml
+        input_mapping:
+          env: configuration
+        params:
+          ENV_FILE: ((foundation))/env/env.yml
+          INSTALLATION_FILE: installation-nonprod-$timestamp.zip
+      - put: installation
+        params:
+          file: installation/installation-nonprod*.zip
 
   # - name: upgrade-opsman
   #   serial: true
