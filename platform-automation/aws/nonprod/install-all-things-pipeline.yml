@@ -75,7 +75,7 @@ resources:
       secret_access_key: ((s3.secret_access_key))
       region_name: ((s3.region_name))
       bucket: ((s3.buckets.platform))
-      regexp: nonprod/lets-encrypt-nonprod.aws.63r53rk54v0r.com.tgz
+      regexp: nonprod/lets-encrypt-(.*).tgz
 
   # triggers used to have jobs do something in a timely manner
   - name: one-time-trigger
