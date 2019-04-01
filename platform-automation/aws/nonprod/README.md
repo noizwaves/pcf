@@ -14,6 +14,9 @@ http://docs.pivotal.io/platform-automation/v2.1/index.html
     --manual --preferred-challenges dns-01 certonly
     ```
 1. Terraform IaaS
+1. Opsman ssh key by
+    1. `terraform output ops_manager_ssh_private_key > ../../opsman.pem`
+    1. `chmod 600 ../../opsman.pem`
 1. Create `credhub-automation` user in credhub via Azure steps
 
 1. Add secrets to credhub at `/pipeline/nonprod` (`pivnet-token`) via

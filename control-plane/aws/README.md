@@ -124,10 +124,10 @@ Using Ops Manager as a jumpbox.
 1. Create remote asset directory via  `ssh -i $OPS_MANAGER_KEY_PATH "ubuntu@${OPS_MANAGER_VM_URL}" mkdir control-plane-assets`
 1. Copy all assets via 
     ```
-    scp -r -i $OPS_MANAGER_KEY_PATH ./releases "ubuntu@${OPS_MANAGER_VM_URL}":~/control-plane-assets && \
-    scp -r -i $OPS_MANAGER_KEY_PATH ./stemcells "ubuntu@${OPS_MANAGER_VM_URL}":~/control-plane-assets && \
-    scp -r -i $OPS_MANAGER_KEY_PATH ./operations "ubuntu@${OPS_MANAGER_VM_URL}":~/control-plane-assets && \
-    scp -i $OPS_MANAGER_KEY_PATH ./control-plane-vars.yml "ubuntu@${OPS_MANAGER_VM_URL}":~/control-plane-assets
+    scp -r -o "IdentitiesOnly=yes" -i $OPS_MANAGER_KEY_PATH ./releases "ubuntu@${OPS_MANAGER_VM_URL}":~/control-plane-assets && \
+    scp -r -o "IdentitiesOnly=yes" -i $OPS_MANAGER_KEY_PATH ./stemcells "ubuntu@${OPS_MANAGER_VM_URL}":~/control-plane-assets && \
+    scp -r -o "IdentitiesOnly=yes" -i $OPS_MANAGER_KEY_PATH ./operations "ubuntu@${OPS_MANAGER_VM_URL}":~/control-plane-assets && \
+    scp -o "IdentitiesOnly=yes" -i $OPS_MANAGER_KEY_PATH ./control-plane-vars.yml "ubuntu@${OPS_MANAGER_VM_URL}":~/control-plane-assets
     ```
 
 ## X. Upload releases to Bosh

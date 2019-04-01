@@ -275,32 +275,32 @@ jobs:
         params:
           ENV_FILE: ((foundation))/env/env.yml
 
-  # - name: configure-pas
-  #   serial: true
-  #   plan:
-  #     - aggregate:
-  #         - get: platform-automation-image
-  #           params:
-  #             unpack: true
-  #           passed:
-  #             - upload-and-stage-pas
-  #           trigger: true
-  #         - get: platform-automation-tasks
-  #           params:
-  #             unpack: true
-  #         - get: configuration
-  #         - get: variable
-  #     - task: configure-pas
-  #       image: platform-automation-image
-  #       file: platform-automation-tasks/tasks/configure-product.yml
-  #       input_mapping:
-  #         config: configuration
-  #         env: configuration
-  #         vars: variable
-  #       params:
-  #         CONFIG_FILE: ((foundation))/config/cf.yml
-  #         VARS_FILES: vars/((foundation))/cf-vars.yml
-  #         ENV_FILE: ((foundation))/env/env.yml
+  - name: configure-pas
+    serial: true
+    plan:
+      - aggregate:
+          - get: platform-automation-image
+            params:
+              unpack: true
+            passed:
+              - upload-and-stage-pas
+            trigger: true
+          - get: platform-automation-tasks
+            params:
+              unpack: true
+          - get: configuration
+          - get: variable
+      - task: configure-pas
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/configure-product.yml
+        input_mapping:
+          config: configuration
+          env: configuration
+          vars: variable
+        params:
+          CONFIG_FILE: ((foundation))/config/cf.yml
+          VARS_FILES: vars/((foundation))/cf-vars.yml
+          ENV_FILE: ((foundation))/env/env.yml
 
   - name: upload-stemcells
     serial: true
@@ -336,7 +336,8 @@ jobs:
             params:
               unpack: true
             passed:
-              - upload-and-stage-pas
+              - configure-pas
+              - upload-stemcells
             trigger: true
           - get: platform-automation-tasks
             params:
