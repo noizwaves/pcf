@@ -90,9 +90,9 @@ jobs:
         image: platform-automation-image
         file: platform-automation-tasks/tasks/delete-installation.yml
         params:
-          ENV_FILE: ((foundation))/env/env.yml
+          ENV_FILE: ((foundation))/env.yml
         input_mapping:
-          env: configuration
+          env: variable
       - task: delete-vm
         image: platform-automation-image
         file: platform-automation-tasks/tasks/delete-vm.yml

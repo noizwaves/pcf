@@ -186,10 +186,10 @@ jobs:
         file: platform-automation-tasks/tasks/configure-authentication.yml
         attempts: 10
         input_mapping:
-          env: configuration
+          env: variable
           config: variable
         params:
-          ENV_FILE: ((foundation))/env/env.yml
+          ENV_FILE: ((foundation))/env.yml
           AUTH_CONFIG_FILE: ((foundation))/auth.yml
       - task: configure-ssl
         image: platform-automation-image
@@ -213,28 +213,28 @@ jobs:
                 --certificate-pem "$(cat certificate/${FULL_CHAIN_FILE})" \
                 --private-key-pem "$(cat certificate/${PRIVKEY_FILE})"
         input_mapping:
-          env: configuration
+          env: variable
           certificate: certificate
         params:
-          ENV_FILE: ((foundation))/env/env.yml
+          ENV_FILE: ((foundation))/env.yml
       - task: configure-director
         image: platform-automation-image
         file: platform-automation-tasks/tasks/configure-director.yml
         input_mapping:
           config: configuration
-          env: configuration
+          env: variable
           vars: variable
         params:
           VARS_FILES: vars/((foundation))/director-vars.yml
-          ENV_FILE: ((foundation))/env/env.yml
+          ENV_FILE: ((foundation))/env.yml
           DIRECTOR_CONFIG_FILE: ((foundation))/config/director.yml
       - task: apply-director-changes
         image: platform-automation-image
         file: platform-automation-tasks/tasks/apply-director-changes.yml
         input_mapping:
-          env: configuration
+          env: variable
         params:
-          ENV_FILE: ((foundation))/env/env.yml
+          ENV_FILE: ((foundation))/env.yml
 
   - name: export-installation
     serial: true
@@ -250,13 +250,53 @@ jobs:
               unpack: true
           - get: configuration
           - get: variable
+      - task: write-credhub-ca-cert
+        image: platform-automation-image
+        params:
+          CA_CERT_VALUE: ((credhub-ca-cert))
+        input_mapping:
+          files: variable
+        output_mapping:
+          certs: variable
+        config:
+          platform: linux
+          inputs:
+            - name: files
+          outputs:
+            - name: certs
+          run:
+            path: /bin/sh
+            args:
+            - -c
+            - |
+              cp -a files/. certs/
+
+              # Format the cert correctly... because the env var lost its formatting
+              echo $CA_CERT_VALUE > certs/temp
+              echo "-----BEGIN CERTIFICATE-----" > certs/credhub_ca_cert
+              cat certs/temp | sed -E 's/\s+/\r\n/g' | sed '/^-/ d' | sed '/-$/ d' | sed '/CERTIFICATE-----/ d' >> certs/credhub_ca_cert
+              echo "-----END CERTIFICATE-----" >> certs/credhub_ca_cert
+      - task: credhub-interpolate
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/credhub-interpolate.yml
+        params:
+          CREDHUB_CLIENT: ((credhub-client))
+          CREDHUB_SECRET: ((credhub-secret))
+          CREDHUB_SERVER: ((credhub-server))
+          CREDHUB_CA_CERT: files/credhub_ca_cert
+          PREFIX: '/pipeline/nonprod'
+          INTERPOLATION_PATH: ((foundation))
+        input_mapping:
+          files: variable
+        output_mapping:
+          interpolated-files: variable
       - task: export-installation
         image: platform-automation-image
         file: platform-automation-tasks/tasks/export-installation.yml
         input_mapping:
-          env: configuration
+          env: variable
         params:
-          ENV_FILE: ((foundation))/env/env.yml
+          ENV_FILE: ((foundation))/env.yml
           INSTALLATION_FILE: installation-nonprod-$timestamp.zip
       - put: installation
         params:
@@ -328,11 +368,11 @@ jobs:
           image: opsman-image
           state: configuration
           config: configuration
-          env: configuration
+          env: variable
           vars: variable
         params:
           VARS_FILES: vars/((foundation))/opsman-vars.yml
-          ENV_FILE: ((foundation))/env/env.yml
+          ENV_FILE: ((foundation))/env.yml
           OPSMAN_CONFIG_FILE: ((foundation))/config/opsman.yml
           STATE_FILE: ((foundation))/state/state.yml
         ensure: *make-state-commit
@@ -340,9 +380,9 @@ jobs:
         image: platform-automation-image
         file: platform-automation-tasks/tasks/apply-director-changes.yml
         input_mapping:
-          env: configuration
+          env: variable
         params:
-          ENV_FILE: ((foundation))/env/env.yml
+          ENV_FILE: ((foundation))/env.yml
 
   - name: upload-and-stage-pas
     serial: true
@@ -360,22 +400,62 @@ jobs:
           - get: pas-product
           - get: configuration
           - get: variable
+      - task: write-credhub-ca-cert
+        image: platform-automation-image
+        params:
+          CA_CERT_VALUE: ((credhub-ca-cert))
+        input_mapping:
+          files: variable
+        output_mapping:
+          certs: variable
+        config:
+          platform: linux
+          inputs:
+            - name: files
+          outputs:
+            - name: certs
+          run:
+            path: /bin/sh
+            args:
+            - -c
+            - |
+              cp -a files/. certs/
+
+              # Format the cert correctly... because the env var lost its formatting
+              echo $CA_CERT_VALUE > certs/temp
+              echo "-----BEGIN CERTIFICATE-----" > certs/credhub_ca_cert
+              cat certs/temp | sed -E 's/\s+/\r\n/g' | sed '/^-/ d' | sed '/-$/ d' | sed '/CERTIFICATE-----/ d' >> certs/credhub_ca_cert
+              echo "-----END CERTIFICATE-----" >> certs/credhub_ca_cert
+      - task: credhub-interpolate
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/credhub-interpolate.yml
+        params:
+          CREDHUB_CLIENT: ((credhub-client))
+          CREDHUB_SECRET: ((credhub-secret))
+          CREDHUB_SERVER: ((credhub-server))
+          CREDHUB_CA_CERT: files/credhub_ca_cert
+          PREFIX: '/pipeline/nonprod'
+          INTERPOLATION_PATH: ((foundation))
+        input_mapping:
+          files: variable
+        output_mapping:
+          interpolated-files: variable
       - task: upload-product
         image: platform-automation-image
         file: platform-automation-tasks/tasks/upload-product.yml
         input_mapping:
           product: pas-product
-          env: configuration
+          env: variable
         params:
-          ENV_FILE: ((foundation))/env/env.yml
+          ENV_FILE: ((foundation))/env.yml
       - task: stage-product
         image: platform-automation-image
         file: platform-automation-tasks/tasks/stage-product.yml
         input_mapping:
           product: pas-product
-          env: configuration
+          env: variable
         params:
-          ENV_FILE: ((foundation))/env/env.yml
+          ENV_FILE: ((foundation))/env.yml
 
   - name: configure-pas
     serial: true
@@ -437,12 +517,12 @@ jobs:
         file: platform-automation-tasks/tasks/configure-product.yml
         input_mapping:
           config: configuration
-          env: configuration
+          env: variable
           vars: variable
         params:
           CONFIG_FILE: ((foundation))/config/cf.yml
           VARS_FILES: vars/((foundation))/cf-vars.yml
-          ENV_FILE: ((foundation))/env/env.yml
+          ENV_FILE: ((foundation))/env.yml
 
   - name: upload-stemcells
     serial: true
@@ -461,14 +541,54 @@ jobs:
             trigger: true
           - get: configuration
           - get: variable
+      - task: write-credhub-ca-cert
+        image: platform-automation-image
+        params:
+          CA_CERT_VALUE: ((credhub-ca-cert))
+        input_mapping:
+          files: variable
+        output_mapping:
+          certs: variable
+        config:
+          platform: linux
+          inputs:
+            - name: files
+          outputs:
+            - name: certs
+          run:
+            path: /bin/sh
+            args:
+            - -c
+            - |
+              cp -a files/. certs/
+
+              # Format the cert correctly... because the env var lost its formatting
+              echo $CA_CERT_VALUE > certs/temp
+              echo "-----BEGIN CERTIFICATE-----" > certs/credhub_ca_cert
+              cat certs/temp | sed -E 's/\s+/\r\n/g' | sed '/^-/ d' | sed '/-$/ d' | sed '/CERTIFICATE-----/ d' >> certs/credhub_ca_cert
+              echo "-----END CERTIFICATE-----" >> certs/credhub_ca_cert
+      - task: credhub-interpolate
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/credhub-interpolate.yml
+        params:
+          CREDHUB_CLIENT: ((credhub-client))
+          CREDHUB_SECRET: ((credhub-secret))
+          CREDHUB_SERVER: ((credhub-server))
+          CREDHUB_CA_CERT: files/credhub_ca_cert
+          PREFIX: '/pipeline/nonprod'
+          INTERPOLATION_PATH: ((foundation))
+        input_mapping:
+          files: variable
+        output_mapping:
+          interpolated-files: variable
       - task: upload-pas-stemcell
         image: platform-automation-image
         file: platform-automation-tasks/tasks/upload-stemcell.yml
         input_mapping:
-          env: configuration
+          env: variable
           stemcell: pas-stemcell
         params:
-          ENV_FILE: ((foundation))/env/env.yml
+          ENV_FILE: ((foundation))/env.yml
 
   - name: apply-product-changes
     serial: true
@@ -486,10 +606,50 @@ jobs:
               unpack: true
           - get: configuration
           - get: variable
+      - task: write-credhub-ca-cert
+        image: platform-automation-image
+        params:
+          CA_CERT_VALUE: ((credhub-ca-cert))
+        input_mapping:
+          files: variable
+        output_mapping:
+          certs: variable
+        config:
+          platform: linux
+          inputs:
+            - name: files
+          outputs:
+            - name: certs
+          run:
+            path: /bin/sh
+            args:
+            - -c
+            - |
+              cp -a files/. certs/
+
+              # Format the cert correctly... because the env var lost its formatting
+              echo $CA_CERT_VALUE > certs/temp
+              echo "-----BEGIN CERTIFICATE-----" > certs/credhub_ca_cert
+              cat certs/temp | sed -E 's/\s+/\r\n/g' | sed '/^-/ d' | sed '/-$/ d' | sed '/CERTIFICATE-----/ d' >> certs/credhub_ca_cert
+              echo "-----END CERTIFICATE-----" >> certs/credhub_ca_cert
+      - task: credhub-interpolate
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/credhub-interpolate.yml
+        params:
+          CREDHUB_CLIENT: ((credhub-client))
+          CREDHUB_SECRET: ((credhub-secret))
+          CREDHUB_SERVER: ((credhub-server))
+          CREDHUB_CA_CERT: files/credhub_ca_cert
+          PREFIX: '/pipeline/nonprod'
+          INTERPOLATION_PATH: ((foundation))
+        input_mapping:
+          files: variable
+        output_mapping:
+          interpolated-files: variable
       - task: apply-product-changes
         image: platform-automation-image
         file: platform-automation-tasks/tasks/apply-changes.yml
         input_mapping:
-          env: configuration
+          env: variable
         params:
-          ENV_FILE: ((foundation))/env/env.yml
+          ENV_FILE: ((foundation))/env.yml
