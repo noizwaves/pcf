@@ -48,7 +48,7 @@ Note: This is not yet connecting to the Control Plane deployed Credhub (instead 
         --secret $NONPROD_CREDHUB_SECRET
     ```
 
-# X. Add existing secrets to Credhub (Opsman's)
+## X. Add existing secrets to Credhub (Opsman's)
 
 Log into Credhub via
 1. `credhub api -s $BOSH_ENVIRONMENT:8844 --skip-tls-validation`
@@ -68,6 +68,11 @@ Store IAM AWS credentials
     - `terraform output ops_manager_iam_user_access_key | pbcopy`
 1. `credhub set -n /pipeline/nonprod/opsman-iam-secret-key -t value -v "$IAM_AWS_SECRET_KEY"`
     - `terraform output ops_manager_iam_user_secret_key | pbcopy`
+
+Store Ops Manager SSH Key via
+1. `credhub set -n /pipeline/nonprod/opsman-ssh -t rsa --private="$PRIVATE" --public="$PUBLIC"`
+    - `terraform output ops_manager_ssh_private_key` -> `$PRIVATE`
+    - `terraform output ops_manager_ssh_public_key` -> `$PUBLIC`
 
 ## X. Download deps
 
