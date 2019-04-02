@@ -69,12 +69,35 @@ Store IAM AWS credentials
 1. `credhub set -n /pipeline/nonprod/opsman-iam-secret-key -t value -v "$IAM_AWS_SECRET_KEY"`
     - `terraform output ops_manager_iam_user_secret_key | pbcopy`
 
+## X. Download deps
+
+1. `fly login -t nonprod -c https://plane.cp.aws.63r53rk54v0r.com/ -n main`
+1. `fly -t nonprod sp -p external-dependencies -c external-dependencies-pipeline.yml -l secrets.yml`
+1. `fly -t nonprod up -p external-dependencies`
+
+
+## X. Install all things
+
+1. `fly -t nonprod sp -p install-all-things -c install-all-things-pipeline.yml -l secrets.yml`
+1. `fly -t nonprod up -p install-all-things`
+
+## Use nonprod
+
+...
+
+## stop all the things
+
+
+
+`om delete-installation`
+
 # TODOS
 
+- job for tearing things down
 - credhub for secrets
 - create S3 buckets in control plane terraforming
 - common descriptions/creation of Github repos and keys
 - change to use CP credhub (not ops man credhub)
 - use RDS for database instead of internal
-- upload certificates
+- update certificates
 - base pas configuration, with operations capturing features?
