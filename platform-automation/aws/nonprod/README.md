@@ -1,6 +1,10 @@
-http://docs.pivotal.io/platform-automation/v2.1/index.html
+# Deploy PAS with Platform Automation to AWS
+
+Using (Platform Automation)[http://docs.pivotal.io/platform-automation/v2.1/index.html]
 
 /pipeline/nonprod
+
+## X. Generate SSL certificates
 
 1. Generate certs using
     ```
@@ -13,21 +17,59 @@ http://docs.pivotal.io/platform-automation/v2.1/index.html
     -d '*.uaa.sys.nonprod.aws.63r53rk54v0r.com' \
     --manual --preferred-challenges dns-01 certonly
     ```
-1. Terraform IaaS
-1. Opsman ssh key by
+
+## X. Pave the IaaS
+
+Terraform IaaS by
+1. `cd terraform-aws/terraform-pas`
+1. `terraform plan -out=plan`
+1. `terraform apply plan`
+1. Capture opsman ssh key by
     1. `terraform output ops_manager_ssh_private_key > ../../opsman.pem`
     1. `chmod 600 ../../opsman.pem`
-1. Create `credhub-automation` user in credhub via Azure steps
 
-1. Add secrets to credhub at `/pipeline/nonprod` (`pivnet-token`) via
-    1. SSH into opsman
-    1. `credhub api 10.0.16.5:8844 --ca-cert=/var/tempest/workspaces/default/root_ca_certificate`
-    1. `credhub login --client-name=credhub-automation --client-secret=$CONCOURSE_CREDHUB_SECRET`
-    1. `credhub set -n /pipeline/nonprod/pivnet-token -t value -v $PIVNET_API_TOKEN`
+## X. Create a client for Concourse jobs to speak to Credhub (Opsman's Credhub)
 
-`om create-vm-extension -n web-lb-security-groups -cp '{ "security_groups": ["web_lb_security_group", "vms_security_group"] }'`
+Note: This is not yet connecting to the Control Plane deployed Credhub (instead it's using Ops Man's Credhub)
 
-TODOS
+1. SSH into Control Plane Ops Manager
+1. Target CP UAA via `uaac target $BOSH_ENVIRONMENT:8443 --skip-ssl-validation`
+1. "Log in" by acquiring a token via `uaac token owner get login -s $UAA_LOGIN_PASSWORD` where
+    - `UAA_LOGIN_PASSWORD` comes from [Uaa Login Client Credentials](https://pcf.cp.aws.63r53rk54v0r.com/api/v0/deployed/director/credentials/uaa_login_client_credentials)
+    - `User name` comes from [Uaa Admin User Credentials](https://pcf.cp.aws.63r53rk54v0r.com/api/v0/deployed/director/credentials/uaa_admin_user_credentials)
+    - `Password` comes from [Uaa Admin User Credentials](https://pcf.cp.aws.63r53rk54v0r.com/api/v0/deployed/director/credentials/uaa_admin_user_credentials)
+1. Set env var `NONPROD_CREDHUB_SECRET` = `$(openssl rand -base64 32)`
+1. Create client via
+    ```
+    uaac client add nonprod_credhub_client \
+        --authorized_grant_types client_credentials \
+        --scope credhub.read,credhub.write \
+        --authorities "credhub.write credhub.read" \
+        --secret $NONPROD_CREDHUB_SECRET
+    ```
+
+# X. Add existing secrets to Credhub (Opsman's)
+
+Log into Credhub via
+1. `credhub api -s $BOSH_ENVIRONMENT:8844 --skip-tls-validation`
+1. `credhub login -s $BOSH_ENVIRONMENT:8844 --client-name=nonprod_credhub_client --client-secret=$NONPROD_CREDHUB_SECRET --skip-tls-validation`
+
+Store PivNet token
+1. `credhub set -n /pipeline/nonprod/pivnet-token -t value -v $PIVNET_API_TOKEN`
+
+Store Root AWS credentials
+1. `credhub set -n /pipeline/nonprod/opsman-aws-access-key -t value -v $ROOT_AWS_ACCESS_KEY`
+    - `terraform input access_key`
+1. `credhub set -n /pipeline/nonprod/opsman-aws-secret-key -t value -v "$ROOT_AWS_SECRET_KEY"`
+    - `terraform input secret_key`
+
+Store IAM AWS credentials
+1. `credhub set -n /pipeline/nonprod/opsman-iam-access-key -t value -v $IAM_AWS_ACCESS_KEY`
+    - `terraform output ops_manager_iam_user_access_key | pbcopy`
+1. `credhub set -n /pipeline/nonprod/opsman-iam-secret-key -t value -v "$IAM_AWS_SECRET_KEY"`
+    - `terraform output ops_manager_iam_user_secret_key | pbcopy`
+
+# TODOS
 
 - credhub for secrets
 - create S3 buckets in control plane terraforming

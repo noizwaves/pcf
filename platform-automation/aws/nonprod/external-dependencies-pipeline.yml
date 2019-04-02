@@ -88,6 +88,7 @@ jobs:
         unpack: true
     - get: config
   - task: write-credhub-ca-cert
+    image: platform-automation-image
     params:
       CA_CERT_VALUE: ((credhub-ca-cert))
     output_mapping:
@@ -96,11 +97,6 @@ jobs:
       files: config
     config:
       platform: linux
-      image_resource:
-        type: docker-image
-        source:
-          repository: alpine
-          tag: edge
       inputs:
         - name: files
       outputs:
@@ -154,6 +150,7 @@ jobs:
         unpack: true
     - get: config
   - task: write-credhub-ca-cert
+    image: platform-automation-image
     params:
       CA_CERT_VALUE: ((credhub-ca-cert))
     output_mapping:
@@ -162,11 +159,6 @@ jobs:
       files: config
     config:
       platform: linux
-      image_resource:
-        type: docker-image
-        source:
-          repository: alpine
-          tag: edge
       inputs:
         - name: files
       outputs:
