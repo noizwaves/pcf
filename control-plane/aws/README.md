@@ -145,13 +145,6 @@ Using Ops Manager as a jumpbox.
     bosh upload-release releases/postgres-release-*.tgz && \
     bosh upload-release releases/uaa-release-*.tgz
 
-## X. Adjust the cloud config
-
-1. SSH into Opsman and set the Bosh Command line credentials as above
-1. `bosh cloud-config > cc.yml`
-1. Edit values (if `env_name != cp`) in `control-plane-assets/operations/add-vm-extension-to-cloud-config.yml` using output from `terraform output control_plane_lb_target_groups`
-1. `bosh update-cloud-config cc.yml -o control-plane-assets/operations/add-vm-extension-to-cloud-config.yml`
-
 ## X. Deploy Concourse
 
 1. Deploy via

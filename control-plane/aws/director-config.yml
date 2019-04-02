@@ -98,5 +98,15 @@ resource-configuration:
     instance_type:
       id: automatic
     internet_connected: false
-vmextensions-configuration: []
-
+vmextensions-configuration:
+- name: control-plane-lb-cloud-properties
+  cloud_properties:
+    security_groups:
+    - control_plane_security_group
+    - vms_security_group
+    lb_target_groups:
+    - cp-atc-https-tg
+    - cp-atc-http-tg
+    - cp-tsa-tg
+    - cp-uaa-tg
+    - cp-credhub-tg
