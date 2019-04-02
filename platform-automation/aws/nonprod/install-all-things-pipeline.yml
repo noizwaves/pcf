@@ -187,10 +187,10 @@ jobs:
         attempts: 10
         input_mapping:
           env: configuration
-          config: configuration
+          config: variable
         params:
           ENV_FILE: ((foundation))/env/env.yml
-          AUTH_CONFIG_FILE: ((foundation))/config/auth.yml
+          AUTH_CONFIG_FILE: ((foundation))/auth.yml
       - task: configure-ssl
         image: platform-automation-image
         config:

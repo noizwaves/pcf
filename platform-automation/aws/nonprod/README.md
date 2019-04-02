@@ -69,16 +69,20 @@ Store IAM AWS credentials (BOSH, PAS)
 1. `credhub set -n /pipeline/nonprod/opsman-iam-secret-key -t value -v "$IAM_AWS_SECRET_KEY"`
     - `terraform output ops_manager_iam_user_secret_key | pbcopy`
 
+Store Ops Manager auth credentials (Ops Manager)
+1. `credhub set -n /pipeline/nonprod/opsman-admin-password -t value -v $OM_PASSWORD`
+1. `credhub set -n /pipeline/nonprod/opsman-decryption-passphrase -t value -v $OM_DP`
+
 Store Ops Manager SSH Key via (BOSH)
 1. `credhub set -n /pipeline/nonprod/opsman-ssh -t rsa --private="$PRIVATE" --public="$PUBLIC"`
     - `terraform output ops_manager_ssh_private_key` -> `$PRIVATE`
     - `terraform output ops_manager_ssh_public_key` -> `$PUBLIC`
 
-Store PAS Credhub Encryption Secret
+Store PAS Credhub Encryption Secret (PAS)
 1. `credhub set -n /pipeline/nonprod/pas-credhub-encryption-secret -t value -v $PAS_CREDHUB_SECRET`
     - `$(openssl rand -base64 32)` -> `$PAS_CREDHUB_SECRET`
 
-Store the Lets Encrypt certificates
+Store the Lets Encrypt certificates (PAS)
 1. `credhub set -n /pipeline/nonprod/lets-encrypt-cert -t value -v "$CERT"`
     - `cat certs/cert.pem`
 1. `credhub set -n /pipeline/nonprod/lets-encrypt-privkey -t value -v "$PRIVKEY"`
