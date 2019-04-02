@@ -16,7 +16,12 @@
   path: /instance_groups/name=web/jobs/name=uaa/properties/uaa/sslPrivateKey?
   value: ((lets_encrypt_certificate.privkey))
 
-# Add chain to UAA
+# Add LE chain to UAA
 - type: replace
   path: /instance_groups/name=web/jobs/name=uaa/properties/uaa/ca_certs/-
+  value: ((lets_encrypt_certificate.chain))
+
+# Now add LE chain to Credhub
+- type: replace
+  path: /instance_groups/name=web/jobs/name=credhub/properties/credhub/authentication/uaa/ca_certs/-
   value: ((lets_encrypt_certificate.chain))
