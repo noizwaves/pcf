@@ -87,13 +87,16 @@ Store IAM AWS credentials
 
 ## stop all the things
 
+Delete the installation (products, BOSH Director, and Ops Manager) via:
+1. `fly -t nonprod sp -p destroy-foundation -c destroy-foundation-pipeline.yml -l secrets.yml`
+1. `fly -t nonprod up -p destroy-foundation`
+1. `fly -t nonprod tj -j destroy-foundation/destroy-foundation`
 
-
-`om delete-installation`
+Unpave the IaaS via
+1. `terraform destroy`
 
 # TODOS
 
-- job for tearing things down
 - credhub for secrets
 - create S3 buckets in control plane terraforming
 - common descriptions/creation of Github repos and keys
@@ -101,3 +104,4 @@ Store IAM AWS credentials
 - use RDS for database instead of internal
 - update certificates
 - base pas configuration, with operations capturing features?
+- use credhub for pipeline secrets
