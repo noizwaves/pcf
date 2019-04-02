@@ -54,25 +54,37 @@ Log into Credhub via
 1. `credhub api -s $BOSH_ENVIRONMENT:8844 --skip-tls-validation`
 1. `credhub login -s $BOSH_ENVIRONMENT:8844 --client-name=nonprod_credhub_client --client-secret=$NONPROD_CREDHUB_SECRET --skip-tls-validation`
 
-Store PivNet token
+Store PivNet token (Pipelines)
 1. `credhub set -n /pipeline/nonprod/pivnet-token -t value -v $PIVNET_API_TOKEN`
 
-Store Root AWS credentials
+Store Root AWS credentials (Ops Manager)
 1. `credhub set -n /pipeline/nonprod/opsman-aws-access-key -t value -v $ROOT_AWS_ACCESS_KEY`
     - `terraform input access_key`
 1. `credhub set -n /pipeline/nonprod/opsman-aws-secret-key -t value -v "$ROOT_AWS_SECRET_KEY"`
     - `terraform input secret_key`
 
-Store IAM AWS credentials
+Store IAM AWS credentials (BOSH, PAS)
 1. `credhub set -n /pipeline/nonprod/opsman-iam-access-key -t value -v $IAM_AWS_ACCESS_KEY`
     - `terraform output ops_manager_iam_user_access_key | pbcopy`
 1. `credhub set -n /pipeline/nonprod/opsman-iam-secret-key -t value -v "$IAM_AWS_SECRET_KEY"`
     - `terraform output ops_manager_iam_user_secret_key | pbcopy`
 
-Store Ops Manager SSH Key via
+Store Ops Manager SSH Key via (BOSH)
 1. `credhub set -n /pipeline/nonprod/opsman-ssh -t rsa --private="$PRIVATE" --public="$PUBLIC"`
     - `terraform output ops_manager_ssh_private_key` -> `$PRIVATE`
     - `terraform output ops_manager_ssh_public_key` -> `$PUBLIC`
+
+Store PAS Credhub Encryption Secret
+1. `credhub set -n /pipelines/nonprod/pas-credhub-encryption-secret -t value -v $PAS_CREDHUB_SECRET`
+    - `$(openssl rand -base64 32)` -> `$PAS_CREDHUB_SECRET`
+
+Store the Lets Encrypt certificates
+1. `credhub set -n /pipelines/nonprod/lets-encrypt-cert -t value -v "$CERT"`
+    - `cat certs/cert.pem`
+1. `credhub set -n /pipelines/nonprod/lets-encrypt-privkey -t value -v "$PRIVKEY"`
+    - `cat certs/privkey.pem`
+1. `credhub set -n /pipelines/nonprod/lets-encrypt-chain -t value -v "$CHAIN"`
+    - `cat certs/chain.pem`
 
 ## X. Download deps
 
