@@ -392,6 +392,46 @@ jobs:
               unpack: true
           - get: configuration
           - get: variable
+      - task: write-credhub-ca-cert
+        image: platform-automation-image
+        params:
+          CA_CERT_VALUE: ((credhub-ca-cert))
+        input_mapping:
+          files: variable
+        output_mapping:
+          certs: variable
+        config:
+          platform: linux
+          inputs:
+            - name: files
+          outputs:
+            - name: certs
+          run:
+            path: /bin/sh
+            args:
+            - -c
+            - |
+              cp -a files/. certs/
+
+              # Format the cert correctly... because the env var lost its formatting
+              echo $CA_CERT_VALUE > certs/temp
+              echo "-----BEGIN CERTIFICATE-----" > certs/credhub_ca_cert
+              cat certs/temp | sed -E 's/\s+/\r\n/g' | sed '/^-/ d' | sed '/-$/ d' | sed '/CERTIFICATE-----/ d' >> certs/credhub_ca_cert
+              echo "-----END CERTIFICATE-----" >> certs/credhub_ca_cert
+      - task: credhub-interpolate
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/credhub-interpolate.yml
+        params:
+          CREDHUB_CLIENT: ((credhub-client))
+          CREDHUB_SECRET: ((credhub-secret))
+          CREDHUB_SERVER: ((credhub-server))
+          CREDHUB_CA_CERT: files/credhub_ca_cert
+          PREFIX: '/pipeline/nonprod'
+          INTERPOLATION_PATH: ((foundation))
+        input_mapping:
+          files: variable
+        output_mapping:
+          interpolated-files: variable
       - task: configure-pas
         image: platform-automation-image
         file: platform-automation-tasks/tasks/configure-product.yml
@@ -440,7 +480,7 @@ jobs:
             passed:
               - configure-pas
               - upload-stemcells
-            trigger: true
+            # trigger: true
           - get: platform-automation-tasks
             params:
               unpack: true

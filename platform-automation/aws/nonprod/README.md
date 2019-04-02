@@ -75,15 +75,15 @@ Store Ops Manager SSH Key via (BOSH)
     - `terraform output ops_manager_ssh_public_key` -> `$PUBLIC`
 
 Store PAS Credhub Encryption Secret
-1. `credhub set -n /pipelines/nonprod/pas-credhub-encryption-secret -t value -v $PAS_CREDHUB_SECRET`
+1. `credhub set -n /pipeline/nonprod/pas-credhub-encryption-secret -t value -v $PAS_CREDHUB_SECRET`
     - `$(openssl rand -base64 32)` -> `$PAS_CREDHUB_SECRET`
 
 Store the Lets Encrypt certificates
-1. `credhub set -n /pipelines/nonprod/lets-encrypt-cert -t value -v "$CERT"`
+1. `credhub set -n /pipeline/nonprod/lets-encrypt-cert -t value -v "$CERT"`
     - `cat certs/cert.pem`
-1. `credhub set -n /pipelines/nonprod/lets-encrypt-privkey -t value -v "$PRIVKEY"`
+1. `credhub set -n /pipeline/nonprod/lets-encrypt-privkey -t value -v "$PRIVKEY"`
     - `cat certs/privkey.pem`
-1. `credhub set -n /pipelines/nonprod/lets-encrypt-chain -t value -v "$CHAIN"`
+1. `credhub set -n /pipeline/nonprod/lets-encrypt-chain -t value -v "$CHAIN"`
     - `cat certs/chain.pem`
 
 ## X. Download deps
