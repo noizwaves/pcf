@@ -21,15 +21,15 @@ resources:
   - name: configuration
     type: git
     source:
-      private_key: ((configuration.private_key))
-      uri: ((configuration.uri))
+      private_key: ((combined.private_key))
+      uri: ((combined.uri))
       branch: master
 
   - name: variable
     type: git
     source:
-      private_key: ((variable.private_key))
-      uri: ((variable.uri))
+      private_key: ((combined.private_key))
+      uri: ((combined.uri))
       branch: master
 
 jobs:
@@ -81,7 +81,7 @@ jobs:
           CREDHUB_SERVER: ((credhub-server))
           CREDHUB_CA_CERT: files/credhub_ca_cert
           PREFIX: '/pipeline/nonprod'
-          INTERPOLATION_PATH: ((foundation))
+          INTERPOLATION_PATH: ((foundation))/vars
         input_mapping:
           files: variable
         output_mapping:
@@ -90,7 +90,7 @@ jobs:
         image: platform-automation-image
         file: platform-automation-tasks/tasks/delete-installation.yml
         params:
-          ENV_FILE: ((foundation))/env.yml
+          ENV_FILE: ((foundation))/vars/env.yml
         input_mapping:
           env: variable
       - task: delete-vm
@@ -101,7 +101,7 @@ jobs:
           config: configuration
           vars: variable
         params:
-          VARS_FILES: vars/((foundation))/opsman-vars.yml
+          VARS_FILES: vars/((foundation))/vars/opsman-vars.yml
           STATE_FILE: ((foundation))/state/state.yml
           OPSMAN_CONFIG_FILE: ((foundation))/config/opsman.yml
         ensure: &make-state-commit

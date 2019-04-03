@@ -58,15 +58,15 @@ resources:
   - name: configuration
     type: git
     source:
-      private_key: ((configuration.private_key))
-      uri: ((configuration.uri))
+      private_key: ((combined.private_key))
+      uri: ((combined.uri))
       branch: master
 
   - name: variable
     type: git
     source:
-      private_key: ((variable.private_key))
-      uri: ((variable.uri))
+      private_key: ((combined.private_key))
+      uri: ((combined.uri))
       branch: master
 
   - name: certificate
@@ -144,7 +144,7 @@ jobs:
           CREDHUB_SERVER: ((credhub-server))
           CREDHUB_CA_CERT: files/credhub_ca_cert
           PREFIX: '/pipeline/nonprod'
-          INTERPOLATION_PATH: ((foundation))
+          INTERPOLATION_PATH: ((foundation))/vars/vars
         input_mapping:
           files: variable
         output_mapping:
@@ -158,7 +158,7 @@ jobs:
           config: configuration
           vars: variable
         params:
-          VARS_FILES: vars/((foundation))/opsman-vars.yml
+          VARS_FILES: vars/((foundation))/vars/opsman-vars.yml
           STATE_FILE: ((foundation))/state/state.yml
           OPSMAN_CONFIG_FILE: ((foundation))/config/opsman.yml
         ensure: &make-state-commit
@@ -189,8 +189,8 @@ jobs:
           env: variable
           config: variable
         params:
-          ENV_FILE: ((foundation))/env.yml
-          AUTH_CONFIG_FILE: ((foundation))/auth.yml
+          ENV_FILE: ((foundation))/vars/env.yml
+          AUTH_CONFIG_FILE: ((foundation))/vars/auth.yml
       - task: configure-ssl
         image: platform-automation-image
         config:
@@ -216,7 +216,7 @@ jobs:
           env: variable
           certificate: certificate
         params:
-          ENV_FILE: ((foundation))/env.yml
+          ENV_FILE: ((foundation))/vars/env.yml
       - task: configure-director
         image: platform-automation-image
         file: platform-automation-tasks/tasks/configure-director.yml
@@ -225,8 +225,8 @@ jobs:
           env: variable
           vars: variable
         params:
-          VARS_FILES: vars/((foundation))/director-vars.yml
-          ENV_FILE: ((foundation))/env.yml
+          VARS_FILES: vars/((foundation))/vars/director-vars.yml
+          ENV_FILE: ((foundation))/vars/env.yml
           DIRECTOR_CONFIG_FILE: ((foundation))/config/director.yml
       - task: apply-director-changes
         image: platform-automation-image
@@ -234,7 +234,7 @@ jobs:
         input_mapping:
           env: variable
         params:
-          ENV_FILE: ((foundation))/env.yml
+          ENV_FILE: ((foundation))/vars/env.yml
 
   - name: export-installation
     serial: true
@@ -285,7 +285,7 @@ jobs:
           CREDHUB_SERVER: ((credhub-server))
           CREDHUB_CA_CERT: files/credhub_ca_cert
           PREFIX: '/pipeline/nonprod'
-          INTERPOLATION_PATH: ((foundation))
+          INTERPOLATION_PATH: ((foundation))/vars
         input_mapping:
           files: variable
         output_mapping:
@@ -296,7 +296,7 @@ jobs:
         input_mapping:
           env: variable
         params:
-          ENV_FILE: ((foundation))/env.yml
+          ENV_FILE: ((foundation))/vars/env.yml
           INSTALLATION_FILE: installation-nonprod-$timestamp.zip
       - put: installation
         params:
@@ -356,7 +356,7 @@ jobs:
           CREDHUB_SERVER: ((credhub-server))
           CREDHUB_CA_CERT: files/credhub_ca_cert
           PREFIX: '/pipeline/nonprod'
-          INTERPOLATION_PATH: ((foundation))
+          INTERPOLATION_PATH: ((foundation))/vars
         input_mapping:
           files: variable
         output_mapping:
@@ -371,8 +371,8 @@ jobs:
           env: variable
           vars: variable
         params:
-          VARS_FILES: vars/((foundation))/opsman-vars.yml
-          ENV_FILE: ((foundation))/env.yml
+          VARS_FILES: vars/((foundation))/vars/opsman-vars.yml
+          ENV_FILE: ((foundation))/vars/env.yml
           OPSMAN_CONFIG_FILE: ((foundation))/config/opsman.yml
           STATE_FILE: ((foundation))/state/state.yml
         ensure: *make-state-commit
@@ -382,7 +382,7 @@ jobs:
         input_mapping:
           env: variable
         params:
-          ENV_FILE: ((foundation))/env.yml
+          ENV_FILE: ((foundation))/vars/env.yml
 
   - name: upload-and-stage-pas
     serial: true
@@ -435,7 +435,7 @@ jobs:
           CREDHUB_SERVER: ((credhub-server))
           CREDHUB_CA_CERT: files/credhub_ca_cert
           PREFIX: '/pipeline/nonprod'
-          INTERPOLATION_PATH: ((foundation))
+          INTERPOLATION_PATH: ((foundation))/vars
         input_mapping:
           files: variable
         output_mapping:
@@ -447,7 +447,7 @@ jobs:
           product: pas-product
           env: variable
         params:
-          ENV_FILE: ((foundation))/env.yml
+          ENV_FILE: ((foundation))/vars/env.yml
       - task: stage-product
         image: platform-automation-image
         file: platform-automation-tasks/tasks/stage-product.yml
@@ -455,7 +455,7 @@ jobs:
           product: pas-product
           env: variable
         params:
-          ENV_FILE: ((foundation))/env.yml
+          ENV_FILE: ((foundation))/vars/env.yml
 
   - name: configure-pas
     serial: true
@@ -507,7 +507,7 @@ jobs:
           CREDHUB_SERVER: ((credhub-server))
           CREDHUB_CA_CERT: files/credhub_ca_cert
           PREFIX: '/pipeline/nonprod'
-          INTERPOLATION_PATH: ((foundation))
+          INTERPOLATION_PATH: ((foundation))/vars
         input_mapping:
           files: variable
         output_mapping:
@@ -521,8 +521,8 @@ jobs:
           vars: variable
         params:
           CONFIG_FILE: ((foundation))/config/cf.yml
-          VARS_FILES: vars/((foundation))/cf-vars.yml
-          ENV_FILE: ((foundation))/env.yml
+          VARS_FILES: vars/((foundation))/vars/cf-vars.yml
+          ENV_FILE: ((foundation))/vars/env.yml
 
   - name: upload-stemcells
     serial: true
@@ -576,7 +576,7 @@ jobs:
           CREDHUB_SERVER: ((credhub-server))
           CREDHUB_CA_CERT: files/credhub_ca_cert
           PREFIX: '/pipeline/nonprod'
-          INTERPOLATION_PATH: ((foundation))
+          INTERPOLATION_PATH: ((foundation))/vars
         input_mapping:
           files: variable
         output_mapping:
@@ -641,7 +641,7 @@ jobs:
           CREDHUB_SERVER: ((credhub-server))
           CREDHUB_CA_CERT: files/credhub_ca_cert
           PREFIX: '/pipeline/nonprod'
-          INTERPOLATION_PATH: ((foundation))
+          INTERPOLATION_PATH: ((foundation))/vars
         input_mapping:
           files: variable
         output_mapping:
@@ -652,4 +652,4 @@ jobs:
         input_mapping:
           env: variable
         params:
-          ENV_FILE: ((foundation))/env.yml
+          ENV_FILE: ((foundation))/vars/env.yml

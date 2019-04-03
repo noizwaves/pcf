@@ -14,8 +14,8 @@ resources:
 - name: config
   type: git
   source:
-    private_key: ((configuration.private_key))
-    uri: ((configuration.uri))
+    private_key: ((combined.private_key))
+    uri: ((combined.uri))
     branch: master
     submodules: all
     depth: 1
