@@ -164,7 +164,7 @@ Using Ops Manager as a jumpbox.
 1. SSH into Opsman
 1. `credhub api -s "$BOSH_ENVIRONMENT":8844 --ca-cert /var/tempest/workspaces/default/root_ca_certificate`
 1. `credhub login -u $UAA_ADMIN_USERNAME -p $UAA_ADMIN_PASSWORD`
-1. `credhub get -n $(credhub find | grep uaa_users_admin | awk '{print $3}')` -> `$CP_PASSWORD`
+1. `credhub get -n /p-bosh/control-plane/uaa_users_admin -q` -> `$CP_PASSWORD`
 1. Visit [https://plane.cp.aws.63r53rk54v0r.com/]() and log in with `admin/$CP_PASSWORD`
 
 ## X. Use control plane
