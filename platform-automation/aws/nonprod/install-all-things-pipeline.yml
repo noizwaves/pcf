@@ -54,6 +54,24 @@ resources:
       bucket: ((s3.buckets.pivnet_products))
       regexp: cf-(.*).pivotal
 
+  - name: healthwatch-product
+    type: s3
+    source:
+      access_key_id: ((s3.access_key_id))
+      bucket: ((s3.buckets.pivnet_products))
+      region_name: ((s3.region_name))
+      secret_access_key: ((s3.secret_access_key))
+      regexp: p-healthwatch-(.*).pivotal
+
+  - name: healthwatch-stemcell
+    type: s3
+    source:
+      access_key_id: ((s3.access_key_id))
+      bucket: ((s3.buckets.pivnet_products))
+      region_name: ((s3.region_name))
+      secret_access_key: ((s3.secret_access_key))
+      regexp: healthwatch-stemcell/light-bosh-stemcell-(.*)-aws.*\.tgz
+
   # configurations
   - name: configuration
     type: git
@@ -524,7 +542,7 @@ jobs:
           VARS_FILES: vars/((foundation))/vars/cf-vars.yml
           ENV_FILE: ((foundation))/vars/env.yml
 
-  - name: upload-stemcells
+  - name: upload-pas-stemcells
     serial: true
     plan:
       - aggregate:
@@ -588,7 +606,210 @@ jobs:
           env: variable
           stemcell: pas-stemcell
         params:
-          ENV_FILE: ((foundation))/env.yml
+          ENV_FILE: ((foundation))/vars/env.yml
+
+  - name: upload-and-stage-healthwatch
+    serial: true
+    plan:
+      - aggregate:
+          - get: platform-automation-image
+            params:
+              unpack: true
+          - get: platform-automation-tasks
+            params:
+              unpack: true
+          - get: healthwatch-product
+          - get: configuration
+          - get: variable
+      - task: write-credhub-ca-cert
+        image: platform-automation-image
+        params:
+          CA_CERT_VALUE: ((credhub-ca-cert))
+        input_mapping:
+          files: variable
+        output_mapping:
+          certs: variable
+        config:
+          platform: linux
+          inputs:
+            - name: files
+          outputs:
+            - name: certs
+          run:
+            path: /bin/sh
+            args:
+            - -c
+            - |
+              cp -a files/. certs/
+
+              # Format the cert correctly... because the env var lost its formatting
+              echo $CA_CERT_VALUE > certs/temp
+              echo "-----BEGIN CERTIFICATE-----" > certs/credhub_ca_cert
+              cat certs/temp | sed -E 's/\s+/\r\n/g' | sed '/^-/ d' | sed '/-$/ d' | sed '/CERTIFICATE-----/ d' >> certs/credhub_ca_cert
+              echo "-----END CERTIFICATE-----" >> certs/credhub_ca_cert
+      - task: credhub-interpolate
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/credhub-interpolate.yml
+        params:
+          CREDHUB_CLIENT: ((credhub-client))
+          CREDHUB_SECRET: ((credhub-secret))
+          CREDHUB_SERVER: ((credhub-server))
+          CREDHUB_CA_CERT: files/credhub_ca_cert
+          PREFIX: '/pipeline/nonprod'
+          INTERPOLATION_PATH: ((foundation))/vars
+        input_mapping:
+          files: variable
+        output_mapping:
+          interpolated-files: variable
+      - task: upload-product
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/upload-product.yml
+        input_mapping:
+          product: healthwatch-product
+          env: variable
+        params:
+          ENV_FILE: ((foundation))/vars/env.yml
+      - task: stage-product
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/stage-product.yml
+        input_mapping:
+          product: healthwatch-product
+          env: variable
+        params:
+          ENV_FILE: ((foundation))/vars/env.yml
+
+  - name: configure-healthwatch
+    serial: true
+    plan:
+      - aggregate:
+          - get: platform-automation-image
+            params:
+              unpack: true
+            passed:
+              - upload-and-stage-healthwatch
+            trigger: true
+          - get: platform-automation-tasks
+            params:
+              unpack: true
+          - get: configuration
+          - get: variable
+      - task: write-credhub-ca-cert
+        image: platform-automation-image
+        params:
+          CA_CERT_VALUE: ((credhub-ca-cert))
+        input_mapping:
+          files: variable
+        output_mapping:
+          certs: variable
+        config:
+          platform: linux
+          inputs:
+            - name: files
+          outputs:
+            - name: certs
+          run:
+            path: /bin/sh
+            args:
+            - -c
+            - |
+              cp -a files/. certs/
+
+              # Format the cert correctly... because the env var lost its formatting
+              echo $CA_CERT_VALUE > certs/temp
+              echo "-----BEGIN CERTIFICATE-----" > certs/credhub_ca_cert
+              cat certs/temp | sed -E 's/\s+/\r\n/g' | sed '/^-/ d' | sed '/-$/ d' | sed '/CERTIFICATE-----/ d' >> certs/credhub_ca_cert
+              echo "-----END CERTIFICATE-----" >> certs/credhub_ca_cert
+      - task: credhub-interpolate
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/credhub-interpolate.yml
+        params:
+          CREDHUB_CLIENT: ((credhub-client))
+          CREDHUB_SECRET: ((credhub-secret))
+          CREDHUB_SERVER: ((credhub-server))
+          CREDHUB_CA_CERT: files/credhub_ca_cert
+          PREFIX: '/pipeline/nonprod'
+          INTERPOLATION_PATH: ((foundation))/vars
+        input_mapping:
+          files: variable
+        output_mapping:
+          interpolated-files: variable
+      - task: configure-healthwatch
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/configure-product.yml
+        input_mapping:
+          config: configuration
+          env: variable
+          vars: variable
+        params:
+          CONFIG_FILE: ((foundation))/config/healthwatch.yml
+          VARS_FILES: vars/((foundation))/vars/healthwatch-vars.yml
+          ENV_FILE: ((foundation))/vars/env.yml
+
+  - name: upload-healthwatch-stemcells
+    serial: true
+    plan:
+      - aggregate:
+          - get: platform-automation-image
+            params:
+              unpack: true
+            passed:
+              - upload-and-stage-healthwatch
+            trigger: true
+          - get: platform-automation-tasks
+            params:
+              unpack: true
+          - get: healthwatch-stemcell
+            trigger: true
+          - get: configuration
+          - get: variable
+      - task: write-credhub-ca-cert
+        image: platform-automation-image
+        params:
+          CA_CERT_VALUE: ((credhub-ca-cert))
+        input_mapping:
+          files: variable
+        output_mapping:
+          certs: variable
+        config:
+          platform: linux
+          inputs:
+            - name: files
+          outputs:
+            - name: certs
+          run:
+            path: /bin/sh
+            args:
+            - -c
+            - |
+              cp -a files/. certs/
+
+              # Format the cert correctly... because the env var lost its formatting
+              echo $CA_CERT_VALUE > certs/temp
+              echo "-----BEGIN CERTIFICATE-----" > certs/credhub_ca_cert
+              cat certs/temp | sed -E 's/\s+/\r\n/g' | sed '/^-/ d' | sed '/-$/ d' | sed '/CERTIFICATE-----/ d' >> certs/credhub_ca_cert
+              echo "-----END CERTIFICATE-----" >> certs/credhub_ca_cert
+      - task: credhub-interpolate
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/credhub-interpolate.yml
+        params:
+          CREDHUB_CLIENT: ((credhub-client))
+          CREDHUB_SECRET: ((credhub-secret))
+          CREDHUB_SERVER: ((credhub-server))
+          CREDHUB_CA_CERT: files/credhub_ca_cert
+          PREFIX: '/pipeline/nonprod'
+          INTERPOLATION_PATH: ((foundation))/vars
+        input_mapping:
+          files: variable
+        output_mapping:
+          interpolated-files: variable
+      - task: upload-healthwatch-stemcell
+        image: platform-automation-image
+        file: platform-automation-tasks/tasks/upload-stemcell.yml
+        input_mapping:
+          env: variable
+          stemcell: healthwatch-stemcell
+        params:
+          ENV_FILE: ((foundation))/vars/env.yml
 
   - name: apply-product-changes
     serial: true
@@ -599,7 +820,9 @@ jobs:
               unpack: true
             passed:
               - configure-pas
-              - upload-stemcells
+              - upload-pas-stemcells
+              - configure-healthwatch
+              - upload-healthwatch-stemcells
             # trigger: true
           - get: platform-automation-tasks
             params:
