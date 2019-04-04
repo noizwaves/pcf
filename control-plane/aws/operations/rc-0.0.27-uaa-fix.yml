@@ -1,2 +1,0 @@
-- type: remove
-  path: /instance_groups/name=web/jobs/name=uaa/properties/uaa/port
