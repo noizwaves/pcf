@@ -105,32 +105,6 @@ jobs:
       params:
         unpack: true
     - get: config
-  - task: write-credhub-ca-cert
-    image: platform-automation-image
-    params:
-      CA_CERT_VALUE: ((credhub-ca-cert))
-    output_mapping:
-      certs: config
-    input_mapping:
-      files: config
-    config:
-      platform: linux
-      inputs:
-        - name: files
-      outputs:
-        - name: certs
-      run:
-        path: /bin/sh
-        args:
-        - -c
-        - |
-          cp -a files/. certs/
-
-          # Format the cert correctly... because the env var lost its formatting
-          echo $CA_CERT_VALUE > certs/temp
-          echo "-----BEGIN CERTIFICATE-----" > certs/credhub_ca_cert
-          cat certs/temp | sed -E 's/\s+/\r\n/g' | sed '/^-/ d' | sed '/-$/ d' | sed '/CERTIFICATE-----/ d' >> certs/credhub_ca_cert
-          echo "-----END CERTIFICATE-----" >> certs/credhub_ca_cert
   - task: credhub-interpolate
     image: platform-automation-image
     file: platform-automation-tasks/tasks/credhub-interpolate.yml
@@ -138,7 +112,7 @@ jobs:
       CREDHUB_CLIENT: ((credhub-client))
       CREDHUB_SECRET: ((credhub-secret))
       CREDHUB_SERVER: ((credhub-server))
-      CREDHUB_CA_CERT: files/credhub_ca_cert
+      CREDHUB_CA_CERT: ((credhub-ca-cert))
       PREFIX: '/pipeline/nonprod'
       INTERPOLATION_PATH: "download-product-configs"
     input_mapping:
@@ -167,32 +141,6 @@ jobs:
       params:
         unpack: true
     - get: config
-  - task: write-credhub-ca-cert
-    image: platform-automation-image
-    params:
-      CA_CERT_VALUE: ((credhub-ca-cert))
-    output_mapping:
-      certs: config
-    input_mapping:
-      files: config
-    config:
-      platform: linux
-      inputs:
-        - name: files
-      outputs:
-        - name: certs
-      run:
-        path: /bin/sh
-        args:
-        - -c
-        - |
-          cp -a files/. certs/
-
-          # Format the cert correctly... because the env var lost its formatting
-          echo $CA_CERT_VALUE > certs/temp
-          echo "-----BEGIN CERTIFICATE-----" > certs/credhub_ca_cert
-          cat certs/temp | sed -E 's/\s+/\r\n/g' | sed '/^-/ d' | sed '/-$/ d' | sed '/CERTIFICATE-----/ d' >> certs/credhub_ca_cert
-          echo "-----END CERTIFICATE-----" >> certs/credhub_ca_cert
   - task: credhub-interpolate
     image: platform-automation-image
     file: platform-automation-tasks/tasks/credhub-interpolate.yml
@@ -200,7 +148,7 @@ jobs:
       CREDHUB_CLIENT: ((credhub-client))
       CREDHUB_SECRET: ((credhub-secret))
       CREDHUB_SERVER: ((credhub-server))
-      CREDHUB_CA_CERT: files/credhub_ca_cert
+      CREDHUB_CA_CERT: ((credhub-ca-cert))
       PREFIX: '/pipeline/nonprod'
       INTERPOLATION_PATH: "download-product-configs"
     input_mapping:
@@ -234,6 +182,7 @@ jobs:
     - put: platform-automation-image
       params:
         file: platform-automation-pivnet/*image*.tgz
+
 - name: fetch-healthwatch
   plan:
   - aggregate:
@@ -246,32 +195,6 @@ jobs:
       params:
         unpack: true
     - get: config
-  - task: write-credhub-ca-cert
-    image: platform-automation-image
-    params:
-      CA_CERT_VALUE: ((credhub-ca-cert))
-    output_mapping:
-      certs: config
-    input_mapping:
-      files: config
-    config:
-      platform: linux
-      inputs:
-        - name: files
-      outputs:
-        - name: certs
-      run:
-        path: /bin/sh
-        args:
-        - -c
-        - |
-          cp -a files/. certs/
-
-          # Format the cert correctly... because the env var lost its formatting
-          echo $CA_CERT_VALUE > certs/temp
-          echo "-----BEGIN CERTIFICATE-----" > certs/credhub_ca_cert
-          cat certs/temp | sed -E 's/\s+/\r\n/g' | sed '/^-/ d' | sed '/-$/ d' | sed '/CERTIFICATE-----/ d' >> certs/credhub_ca_cert
-          echo "-----END CERTIFICATE-----" >> certs/credhub_ca_cert
   - task: credhub-interpolate
     image: platform-automation-image
     file: platform-automation-tasks/tasks/credhub-interpolate.yml
@@ -279,7 +202,7 @@ jobs:
       CREDHUB_CLIENT: ((credhub-client))
       CREDHUB_SECRET: ((credhub-secret))
       CREDHUB_SERVER: ((credhub-server))
-      CREDHUB_CA_CERT: files/credhub_ca_cert
+      CREDHUB_CA_CERT: ((credhub-ca-cert))
       PREFIX: '/pipeline/nonprod'
       INTERPOLATION_PATH: "download-product-configs"
     input_mapping:
