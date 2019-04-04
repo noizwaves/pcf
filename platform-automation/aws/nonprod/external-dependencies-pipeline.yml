@@ -14,7 +14,7 @@ resources:
 - name: config
   type: git
   source:
-    private_key: ((combined.private_key))
+    private_key: ((combined_private_key))
     uri: ((combined.uri))
     branch: master
     submodules: all
@@ -23,47 +23,47 @@ resources:
 - name: opsman-product
   type: s3
   source:
-    access_key_id: ((s3.access_key_id))
+    access_key_id: ((s3_access_key_id))
     bucket: ((s3.buckets.pivnet_products))
     region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
+    secret_access_key: ((s3_secret_access_key))
     regexp: OpsManager(.*)onAWS.yml
     # regexp: ops-manager-aws-(.*).yml
 
 - name: pas-product
   type: s3
   source:
-    access_key_id: ((s3.access_key_id))
+    access_key_id: ((s3_access_key_id))
     bucket: ((s3.buckets.pivnet_products))
     region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
+    secret_access_key: ((s3_secret_access_key))
     regexp: cf-(.*).pivotal
 
 - name: pas-stemcell
   type: s3
   source:
-    access_key_id: ((s3.access_key_id))
+    access_key_id: ((s3_access_key_id))
     bucket: ((s3.buckets.pivnet_products))
     region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
+    secret_access_key: ((s3_secret_access_key))
     regexp: pas-stemcell/light-bosh-stemcell-(.*)-aws.*\.tgz
 
 - name: healthwatch-product
   type: s3
   source:
-    access_key_id: ((s3.access_key_id))
+    access_key_id: ((s3_access_key_id))
     bucket: ((s3.buckets.pivnet_products))
     region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
+    secret_access_key: ((s3_secret_access_key))
     regexp: p-healthwatch-(.*).pivotal
 
 - name: healthwatch-stemcell
   type: s3
   source:
-    access_key_id: ((s3.access_key_id))
+    access_key_id: ((s3_access_key_id))
     bucket: ((s3.buckets.pivnet_products))
     region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
+    secret_access_key: ((s3_secret_access_key))
     regexp: healthwatch-stemcell/light-bosh-stemcell-(.*)-aws.*\.tgz
 
 - name: platform-automation-pivnet
@@ -77,19 +77,19 @@ resources:
 - name: platform-automation-tasks
   type: s3
   source:
-    access_key_id: ((s3.access_key_id))
+    access_key_id: ((s3_access_key_id))
     bucket: ((s3.buckets.pivnet_products))
     region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
+    secret_access_key: ((s3_secret_access_key))
     regexp: platform-automation-tasks-(.*).zip
 
 - name: platform-automation-image
   type: s3
   source:
-    access_key_id: ((s3.access_key_id))
+    access_key_id: ((s3_access_key_id))
     bucket: ((s3.buckets.pivnet_products))
     region_name: ((s3.region_name))
-    secret_access_key: ((s3.secret_access_key))
+    secret_access_key: ((s3_secret_access_key))
     regexp: platform-automation-image-(.*).tgz
 
 jobs:
